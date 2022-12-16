@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-#include "./NEAT/population.cpp"
+#include "population.cpp"
 
 using namespace std;
 
