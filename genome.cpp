@@ -98,6 +98,11 @@ void Genome::loadInputs(float inputs[]) {
 void Genome::runNetwork(float activationFn(float input)) {
 	/* Process all sumInput and sumOutput. For that, it "scans" each layer from the inputs to the last hidden's layer to calculate sumInput with already known value. */ 
 	
+	// reset sumInput
+	for (int i = nbInput + 1; i < (int) nodes.size(); i++) {
+		nodes[i].sumInput = 0;
+	}
+	
 	int lastLayer = nodes[1 + nbInput].layer;
 	
 	for (int ilayer = 0; ilayer < lastLayer; ilayer++) {
