@@ -70,7 +70,7 @@ int main() {
     float c = 0.4f; // Coefficient for processing the comparaison between two genomes
     
     // for crossover
-    bool elitism = true;    // if at each generation the fitter genome is conserve true, else false
+    bool elitism = false;    // if at each generation the fitter genome is conserve true, else false
     
     // for mutate
     float mutateWeightThresh = 0.8f;    // probability of a connection's weight being mutated
