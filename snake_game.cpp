@@ -220,6 +220,7 @@ void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float ac
     setupSnake(procOutputs, &snakeArgs);
     
     drawPlayground(&snakeArgs);
+    cout << endl;
     
 	float procInputs[nbOutput];
 	float result = -1.0f;
@@ -232,6 +233,7 @@ void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float ac
 		result = snakeProcess(procInputs, procOutputs, &snakeArgs);
 		
 	    drawPlayground(&snakeArgs);
+        cout << endl;
 		
 		iteration ++;
 	}
@@ -245,7 +247,7 @@ int main() {
     int popSize = 50;
     int nbInput = 14;
     int nbOutput = 3;
-    int nbHiddenInit = 4;
+    int nbHiddenInit = 3;
     float probConnInit = 0.4f;
     bool areRecurrentConnectionsAllowed = false;
     float weightExtremumInit = 20.0f;
@@ -260,10 +262,11 @@ int main() {
     float b = 1.0f;
     float c = 0.4f;
     
-    while (pop.generation < 10000) {
+    while (pop.generation < 800) {
+        cout << "generation " << pop.generation << endl;
         pop.runNetworkAuto(snakeProcess, &snakeArgs, setupSnake, sigmoid, 500);
         pop.speciate(target, targetThresh, stepThresh, a, b, c);
-        pop.crossover();
+        pop.crossover(true);
         pop.mutate();
     }
     
