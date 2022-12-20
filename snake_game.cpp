@@ -266,7 +266,7 @@ int main() {
         cout << "generation " << pop.generation << endl;
         pop.runNetworkAuto(snakeProcess, &snakeArgs, setupSnake, sigmoid, 500);
         pop.speciate(target, targetThresh, stepThresh, a, b, c);
-        pop.crossover(true);
+        pop.crossover(false);
         pop.mutate();
     }
     
