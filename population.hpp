@@ -37,7 +37,7 @@ class Population{
 		void runNetwork(float activationFn(float input), int genomeId);
 		void getOutputs(float outputs[], int genomeId);
 		void runNetworkAuto(float processFn(float procInputs[], float procOutputs[], struct args* args), struct args* args, void initArgsInputs(float inputs[], struct args* args), float activationFn(float input), int maxIterationThresh, float fitnessOnMaxIteration = 0.0f);
-		//void runNetworkAuto(float processFn(float procInputs[], float* procOutputs[]), float procInputsInit[], float activationFn(float inputs[]), int maxIterationThresh, int genomeId);
+		void runNetworkAuto(float processFn(float procInputs[], float procOutputs[], struct args* args), struct args* args, void initArgsInputs(float inputs[], struct args* args), float activationFn(float input), int maxIterationThresh, float fitnessOnMaxIteration, int genomeId);
 		void setFitness(float fitness, int genomeId);
 		void speciate(int target = 5, int targetThresh = 1, float stepThresh = 0.5f, float a = 1.0f, float b = 1.0f, float c = 0.4f);
 		void crossover(bool elitism = false);	// git error#3

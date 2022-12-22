@@ -372,7 +372,7 @@ void Genome::drawNetwork(sf::Vector2u windowSize, float dotsRadius) {
 	int nbLayer = nodes[1 + nbInput].layer + 1;
 
 	// variables for position x
-	float firstLayerX = 200; //0.1 * windowSize.x;
+	float firstLayerX = 200;
 	float stepX = (0.9 * windowSize.x - firstLayerX)/ (nbLayer - 1);
 
 	// input

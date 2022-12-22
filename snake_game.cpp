@@ -1,6 +1,7 @@
 #include <iostream>
 #include <cmath>
 #include "population.cpp"
+#include <SFML/Graphics.hpp>
 
 using namespace std;
 
@@ -28,8 +29,8 @@ bool isPosBusy(int pos, bool detectFruit, struct args* snakeArgs) {
     return detectFruit && pos == snakeArgs->fruit;
 }
 
-void drawPlayground(struct args* snakeArgs) {
-    /* Print the playground with circle for snake's part and sharp for fruits */
+void drawPlaygroundConsole(struct args* snakeArgs) {
+    /* Print in the console the playground with circle for snake's part and sharp for fruits */
     for (int i = 0; i < snakeArgs->playgroundSize; i++) {
         for (int j = 0; j < snakeArgs->playgroundSize; j++) {
             if (isPosBusy(j + i * snakeArgs->playgroundSize, true, snakeArgs)) {
@@ -43,6 +44,72 @@ void drawPlayground(struct args* snakeArgs) {
             }
         }
         cout << endl;
+    }
+    
+    cout << endl;
+}
+
+void drawPlaygroundSFML(struct args* snakeArgs, sf::RenderWindow* window, float timeUpsSeconds) {
+    /* Display the playground with SFML */
+    sf::Clock clock;
+    sf::Time accumulator = sf::Time::Zero;
+    sf::Time ups = sf::seconds(timeUpsSeconds);
+    
+    while (window->isOpen() && accumulator < ups) {
+        sf::Event event;
+        while (window->pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed) {
+                window->close();
+            }
+        }
+        
+        window->clear(sf::Color::Black);
+        sf::CircleShape dots[snakeArgs->playgroundSize * snakeArgs->playgroundSize];
+        
+        float displayStep;
+        float displayFirstY;
+        float displayFirstX;
+        if (window->getSize().x > window->getSize().y) {
+            displayStep = 0.8 * window->getSize().y / snakeArgs->playgroundSize;
+            displayFirstY = 0.1 * window->getSize().y;
+            displayFirstX = (window->getSize().x - 0.8 * window->getSize().y) / 2;
+        } else {
+            displayStep = 0.8 * window->getSize().x / snakeArgs->playgroundSize;
+            displayFirstX = 0.1 * window->getSize().x;
+            displayFirstY = (window->getSize().y - 0.8 * window->getSize().x) / 2;
+        }
+        float snakeDotsRadius = 0.8 * (displayStep / 2);
+        float fruitDotsRadius = 0.8 * (displayStep / 2);
+        float emptyDotsRadius = 0.1 * (displayStep / 2);
+        
+        for (int i = 0; i < snakeArgs->playgroundSize; i++) {
+            for (int j = 0; j < snakeArgs->playgroundSize; j++) {
+                if (isPosBusy(j + i * snakeArgs->playgroundSize, true, snakeArgs)) {
+                    if (isPosBusy(j + i * snakeArgs->playgroundSize, false, snakeArgs)) {
+	                    dots[j + i * snakeArgs->playgroundSize].setRadius(snakeDotsRadius);
+	                    dots[j + i * snakeArgs->playgroundSize].setPosition({displayFirstX + displayStep * j - snakeDotsRadius, displayFirstY + displayStep * i - snakeDotsRadius});
+	                    dots[j + i * snakeArgs->playgroundSize].setFillColor(sf::Color::Green);
+                    } else {
+	                    dots[j + i * snakeArgs->playgroundSize].setRadius(fruitDotsRadius);
+	                    dots[j + i * snakeArgs->playgroundSize].setPosition({displayFirstX + displayStep * j - fruitDotsRadius, displayFirstY + displayStep * i - fruitDotsRadius});
+	                    dots[j + i * snakeArgs->playgroundSize].setFillColor(sf::Color::Red);
+                    }
+                } else {
+                    dots[j + i * snakeArgs->playgroundSize].setRadius(emptyDotsRadius);
+                    dots[j + i * snakeArgs->playgroundSize].setPosition({displayFirstX + displayStep * j - emptyDotsRadius, displayFirstY + displayStep * i - emptyDotsRadius});
+                    dots[j + i * snakeArgs->playgroundSize].setFillColor(sf::Color::White);
+                }
+            }
+        }
+        
+        for (int i = 0; i < snakeArgs->playgroundSize * snakeArgs->playgroundSize; i++) {
+	        window->draw(dots[i]);
+        }
+        
+        window->display();
+        
+        accumulator += clock.restart();
     }
 }
 
@@ -207,11 +274,13 @@ float snakeProcess(float inputs[], float outputs[], struct args* snakeArgs) {
     outputs[12] = snakeEyes((5 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
     outputs[13] = snakeEyes((6 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
     
-    snakeArgs->score += 1.0f;
+    snakeArgs->score += 0.1f;
     return -1.0f;  // game not finished
 }
 
-void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float activationFn(float input), int maxIterationsThresh) {
+void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float activationFn(float input), int maxIterationsThresh, bool displayConsole = true, sf::Vector2u windowSize = {800, 600}, float timeUpsSeconds = 0.7f) {
+    sf::RenderWindow window(sf::VideoMode(windowSize), "NEAT - Titofra");
+    
     /* Print a game played by the genome of id genomeId in population pop */
     args snakeArgs;
     
@@ -219,8 +288,11 @@ void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float ac
     float procOutputs[nbInput];
     setupSnake(procOutputs, &snakeArgs);
     
-    drawPlayground(&snakeArgs);
-    cout << endl;
+    if (displayConsole) {
+	    drawPlaygroundConsole(&snakeArgs);
+	} else {
+	    drawPlaygroundSFML(&snakeArgs, &window, timeUpsSeconds);
+	}
     
 	float procInputs[nbOutput];
 	float result = -1.0f;
@@ -232,8 +304,11 @@ void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float ac
 		
 		result = snakeProcess(procInputs, procOutputs, &snakeArgs);
 		
-	    drawPlayground(&snakeArgs);
-        cout << endl;
+		if (displayConsole) {
+		    drawPlaygroundConsole(&snakeArgs);
+		} else {
+		    drawPlaygroundSFML(&snakeArgs, &window, timeUpsSeconds);
+		}
 		
 		iteration ++;
 	}
@@ -262,11 +337,14 @@ int main() {
     float b = 1.0f;
     float c = 0.4f;
     
-    while (pop.generation < 800) {
-        cout << "generation " << pop.generation << endl;
+    float bestFitness = 0.0f;
+    while (bestFitness < 2300.0f && pop.generation < 5000) {
+        cout << "generation " << pop.generation;
         pop.runNetworkAuto(snakeProcess, &snakeArgs, setupSnake, sigmoid, 500);
         pop.speciate(target, targetThresh, stepThresh, a, b, c);
-        pop.crossover(false);
+        bestFitness = pop.genomes[pop.fitterGenomeId].fitness;
+        cout << "  - best fitness: " << bestFitness << endl;
+        pop.crossover();
         pop.mutate();
     }
     
@@ -275,11 +353,12 @@ int main() {
     pop.speciate(target, targetThresh, stepThresh, a, b, c);
     
     // print information and draw the network of the fitter genome
-    pop.printInfo(true, true, false, false);
+    pop.printInfo(true, false, false, false);
     pop.drawNetwork(pop.fitterGenomeId);
     
     // play a game by the fitter genome
-    playGame(&pop, pop.fitterGenomeId, nbInput, nbOutput, sigmoid, 500);
+    bool displayInConsole = false;
+    playGame(&pop, pop.fitterGenomeId, nbInput, nbOutput, sigmoid, 500, displayInConsole);
     
     return 0;
 }

@@ -36,35 +36,34 @@ void Population::getOutputs(float outputs[], int genomeId) {
 }
 
 void Population::runNetworkAuto(float processFn(float procInputs[], float procOutputs[], struct args* args), struct args* args, void initArgsInputs(float inputs[], struct args* args), float activationFn(float input), int maxIterationThresh, float fitnessOnMaxIteration) {
-	for (int i = 0; i < popSize; i++) {
-		// init args and inputs
-		float procOutputs[nbInput];
-        initArgsInputs(procOutputs, args);
-		
-		float procInputs[nbOutput];
-		float result = -1.0f;
-		int iteration = 0;
-		while (iteration < maxIterationThresh && result < 0.0f) {
-			genomes[i].loadInputs(procOutputs);
-			genomes[i].runNetwork(activationFn);
-			genomes[i].getOutputs(procInputs);
-			
-			result = processFn(procInputs, procOutputs, args);
-			
-			iteration ++;
-		}
-		if (result < 0.0f) {
-			genomes[i].fitness = fitnessOnMaxIteration;
-		} else {
-			genomes[i].fitness = result;
-		}
+	for (int genomeId = 0; genomeId < popSize; genomeId ++) {
+		runNetworkAuto(processFn, args, initArgsInputs, activationFn, maxIterationThresh, fitnessOnMaxIteration, genomeId);
 	}
 }
 
-// void Population::runNetworkAuto(float processFn(), float activationFn(float inputs[]), int genomeId) {
-// 	
-// }
-
+void Population::runNetworkAuto(float processFn(float procInputs[], float procOutputs[], struct args* args), struct args* args, void initArgsInputs(float inputs[], struct args* args), float activationFn(float input), int maxIterationThresh, float fitnessOnMaxIteration, int genomeId) {
+	// init args and inputs
+	float procOutputs[nbInput];
+    initArgsInputs(procOutputs, args);
+	
+	float procInputs[nbOutput];
+	float result = -1.0f;
+	int iteration = 0;
+	while (iteration < maxIterationThresh && result < 0.0f) {
+		genomes[genomeId].loadInputs(procOutputs);
+		genomes[genomeId].runNetwork(activationFn);
+		genomes[genomeId].getOutputs(procInputs);
+		
+		result = processFn(procInputs, procOutputs, args);
+		
+		iteration ++;
+	}
+	if (result < 0.0f) {
+		genomes[genomeId].fitness = fitnessOnMaxIteration;
+	} else {
+		genomes[genomeId].fitness = result;
+	}
+}
 
 void Population::setFitness(float fitness, int genomeId) {
 	genomes[genomeId].fitness = fitness;
@@ -219,7 +218,7 @@ void Population::updateFitnesses() {
 			if (species[i].sumFitness / (int) species[i].members.size() > species[i].avgFitness) {	// the avgFitness of the species has increased
 				species[i].gensSinceImproved  = 0;
 			} else {
-				species[i].gensSinceImproved += 1;
+				species[i].gensSinceImproved ++;
 			}
 			
 			species[i].avgFitness = species[i].sumFitness / (int) species[i].members.size();
@@ -379,7 +378,7 @@ void Population::printInfo(bool extendedGlobal, bool printSpecies, bool printGen
 	if (printSpecies) {
 		cout << "	" << "Species [id, average fitness, average fitness (adjusted), number of allowed offspring(s), number of generations since improved, number of members, dead]" << endl;
 		for (int i = 0; i < (int) species.size(); i++) {
-			cout << "	" << "	" << i << "	" << species[i].avgFitness << "	" << species[i].avgFitnessAdjusted << "	" << species[i].allowedOffspring << "	" << species[i].gensSinceImproved << "	" << (int) species[i].members.size() << "	";
+			cout << "	" << "	" << species[i].id << "	" << species[i].avgFitness << "	" << species[i].avgFitnessAdjusted << "	" << species[i].allowedOffspring << "	" << species[i].gensSinceImproved << "	" << (int) species[i].members.size() << "	";
 			if (species[i].isDead) {
 				cout << "yes" << endl;
 			} else {
