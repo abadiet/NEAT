@@ -32,7 +32,7 @@ void Population::runNetwork(float activationFn(float input), int genomeId) {
 }
 
 void Population::getOutputs(float outputs[], int genomeId) {
-	return genomes[genomeId].getOutputs(outputs);
+	genomes[genomeId].getOutputs(outputs);
 }
 
 void Population::runNetworkAuto(float processFn(float procInputs[], float procOutputs[], struct args* args), struct args* args, void initArgsInputs(float inputs[], struct args* args), float activationFn(float input), int maxIterationThresh, float fitnessOnMaxIteration) {
