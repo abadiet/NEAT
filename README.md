@@ -1,5 +1,4 @@
 # NEAT
-[WARNING: I am currently working on, so many issues can be raised]
 
 This is a basic example of NEAT algorithm.
 
