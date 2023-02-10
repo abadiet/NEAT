@@ -11,3 +11,5 @@ Based on the work of:
 - Neat AI (https://www.youtube.com/watch?v=3nbvrrdymF0&list=PLnICFpQDyZRFqjdtcTjshOb1IJqns6h6w)
 - K.O. Stanley and R. Miikkulainen (http://nn.cs.utexas.edu/downloads/papers/stanley.ec02.pdf)
 - Kenneth O. Stanley, Bobby D. Bryant, Risto Miikkulainen (http://nn.cs.utexas.edu/downloads/papers/stanley.ieeetec05.pdf)
+
+To run the snake AI:  <code>g++ snake_game.cpp -o snake_game.o -lsfml-window -lsfml-system -lsfml-graphics</code>
