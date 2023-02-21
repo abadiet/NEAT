@@ -360,5 +360,7 @@ int main() {
     bool displayInConsole = false;
     playGame(&pop, pop.fitterGenomeId, nbInput, nbOutput, sigmoid, 500, displayInConsole);
     
+    pop.save();
+    
     return 0;
 }

@@ -10,11 +10,11 @@ Genome::Genome(int nbInput, int nbOutput, int nbHiddenInit, float probConnInit, 
 	speciesId = -1;
 	// NODES
 	// bias
-	nodes.push_back(Node(0, INPUT, 0));
+	nodes.push_back(Node(0, 0));
 	nodes[0].sumInput = 1;	// init value of the bias node
 	// input
 	for (int i = 1; i < nbInput + 1; i++) {
-		nodes.push_back(Node(i, INPUT, 0));
+		nodes.push_back(Node(i, 0));
 	}
 	// output
 	int outputLayer;
@@ -24,11 +24,11 @@ Genome::Genome(int nbInput, int nbOutput, int nbHiddenInit, float probConnInit, 
 		outputLayer = 1;
 	}
 	for (int i = nbInput + 1; i < nbInput + 1 + nbOutput; i++) {
-		nodes.push_back(Node(i, OUTPUT, outputLayer));
+		nodes.push_back(Node(i, outputLayer));
 	}
 	// hidden
 	for (int i = nbInput + 1 + nbOutput; i < nbInput + 1 + nbOutput + nbHiddenInit; i++) {
-		nodes.push_back(Node(i, HIDDEN, 1));
+		nodes.push_back(Node(i, 1));
 	}
 	
 	// CONNECTIONS
@@ -276,7 +276,7 @@ bool Genome::addNode(vector<vector<int>>* innovIds, int* lastInnovId, int maxIte
 			
 			// setup new node
 			int newNodeId = (int) nodes.size();
-			nodes.push_back(Node(newNodeId, HIDDEN, -1));	// no layer for the moment
+			nodes.push_back(Node(newNodeId, -1));	// no layer for the moment
 			
 			// build first connection
 			int inNodeId = connections[iConn].inNodeId;
