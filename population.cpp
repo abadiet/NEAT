@@ -406,3 +406,284 @@ void Population::printInfo(bool extendedGlobal, bool printSpecies, bool printGen
 		}
 	}
 }
+
+void Population::save(const string filepath){
+	ofstream fileobj(filepath);
+
+	if (fileobj.is_open()){
+		for (int k = 0; k < (int) innovIds.size(); k++){
+			for (int j = 0; j < (int) innovIds[k].size(); j++){
+				fileobj << innovIds[k][j] << ",";
+			}
+			fileobj << ";";
+		}
+		fileobj << "\n";
+
+		fileobj << lastInnovId << "\n";
+		fileobj << popSize << "\n";
+		fileobj << speciationThresh << "\n";
+		fileobj << threshGensSinceImproved << "\n";
+		fileobj << nbInput << "\n";
+		fileobj << nbOutput << "\n";
+		fileobj << nbHiddenInit << "\n";
+		fileobj << probConnInit << "\n";
+		fileobj << areRecurrentConnectionsAllowed << "\n";
+		fileobj << weightExtremumInit << "\n";
+		fileobj << generation << "\n";
+		fileobj << avgFitness << "\n";
+		fileobj << avgFitnessAdjusted << "\n";
+		fileobj << fitterGenomeId << "\n";
+
+		for (int k = 0; k < (int) genomes.size(); k++){
+			fileobj << genomes[k].fitness << "\n";
+			fileobj << genomes[k].speciesId << "\n";
+
+
+			for (int j = 0; j < (int) genomes[k].nodes.size(); j++){
+				fileobj << genomes[k].nodes[j].id << ",";
+				fileobj << genomes[k].nodes[j].layer << ",";
+				fileobj << genomes[k].nodes[j].sumInput << ",";
+				fileobj << genomes[k].nodes[j].sumOutput << ",";
+			}
+			fileobj << "\n";
+
+			for (int j = 0; j < (int) genomes[k].connections.size(); j++){
+				fileobj << genomes[k].connections[j].innovId << ",";
+				fileobj << genomes[k].connections[j].inNodeId << ",";
+				fileobj << genomes[k].connections[j].outNodeId << ",";
+				fileobj << genomes[k].connections[j].weight << ",";
+				fileobj << genomes[k].connections[j].enabled << ",";
+				fileobj << genomes[k].connections[j].isRecurrent << ",";
+			}
+			fileobj << "\n";
+		}
+
+		fileobj.close();
+	}
+}
+
+void Population::load(const string filepath){
+	ifstream fileobj(filepath);
+
+	if (fileobj.is_open()){
+
+		string line;
+		size_t pos = 0;
+
+		if (getline(fileobj, line)){
+			innovIds.clear();
+			size_t pos_sep = line.find(';');
+			while (pos_sep != string::npos) {
+				innovIds.push_back({});
+				string sub_line = line.substr(0, pos_sep - 1);
+				pos = sub_line.find(',');
+				while (pos != string::npos) {
+					innovIds.back().push_back(stoi(sub_line.substr(0, pos)));
+					sub_line = sub_line.substr(pos + 1);
+					pos = sub_line.find(',');
+				}
+				line = line.substr(pos_sep + 1);
+				pos_sep = line.find(';');
+			}
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+
+		if (getline(fileobj, line)){
+			lastInnovId = stoi(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			popSize = stoi(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			speciationThresh = stof(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			threshGensSinceImproved = stoi(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			nbInput = stoi(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			nbOutput = stoi(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			nbHiddenInit = stoi(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			probConnInit = stof(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			areRecurrentConnectionsAllowed = (line == "1");
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			weightExtremumInit = stof(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			generation = stoi(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			avgFitness = stof(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			avgFitnessAdjusted = stof(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		if (getline(fileobj, line)){
+			fitterGenomeId = stoi(line);
+		} else {
+			cout << "Error while loading model" << endl;
+			throw 0;
+		}
+		genomes.clear();
+		while (getline(fileobj, line)){
+			genomes.push_back(Genome(nbInput, nbOutput, nbHiddenInit, probConnInit, &innovIds, &lastInnovId, weightExtremumInit));
+
+			genomes.back().fitness = stof(line);
+			if (getline(fileobj, line)){
+				genomes.back().speciesId = stoi(line);
+			} else {
+				cout << "Error while loading model" << endl;
+				throw 0;
+			}
+			if (getline(fileobj, line)){
+				genomes.back().nodes.clear();
+				pos = line.find(',');
+				while (pos != string::npos) {
+					genomes.back().nodes.push_back(Node());
+
+					genomes.back().nodes.back().id = stoi(line.substr(0, pos));
+
+					line = line.substr(pos + 1);
+					pos = line.find(',');
+					if (pos == string::npos) {
+						cout << "Error while loading model" << endl;
+						throw 0;
+					}
+					genomes.back().nodes.back().layer = stoi(line.substr(0, pos));
+
+					line = line.substr(pos + 1);
+					pos = line.find(',');
+					if (pos == string::npos) {
+						cout << "Error while loading model" << endl;
+						throw 0;
+					}
+					genomes.back().nodes.back().sumInput = stod(line.substr(0, pos));	// stdof's range is not the float's one... weird, anyway it works with stod of course
+
+					line = line.substr(pos + 1);
+					pos = line.find(',');
+					if (pos == string::npos) {
+						cout << "Error while loading model" << endl;
+						throw 0;
+					}
+					genomes.back().nodes.back().sumOutput = stod(line.substr(0, pos));	// stdof's range is not the float's one... weird, anyway it works with stod of course
+
+					line = line.substr(pos + 1);
+					pos = line.find(',');
+				}
+			} else {
+				cout << "Error while loading model" << endl;
+				throw 0;
+			}
+			if (getline(fileobj, line)){
+				genomes.back().connections.clear();
+				pos = line.find(',');
+				while (pos != string::npos) {
+					genomes.back().connections.push_back(Connection());
+
+					genomes.back().connections.back().innovId = stoi(line.substr(0, pos));
+
+					line = line.substr(pos + 1);
+					pos = line.find(',');
+					if (pos == string::npos) {
+						cout << "Error while loading model" << endl;
+						throw 0;
+					}
+					genomes.back().connections.back().inNodeId = stoi(line.substr(0, pos));
+
+					line = line.substr(pos + 1);
+					pos = line.find(',');
+					if (pos == string::npos) {
+						cout << "Error while loading model" << endl;
+						throw 0;
+					}
+					genomes.back().connections.back().outNodeId = stoi(line.substr(0, pos));
+
+					line = line.substr(pos + 1);
+					pos = line.find(',');
+					if (pos == string::npos) {
+						cout << "Error while loading model" << endl;
+						throw 0;
+					}
+					genomes.back().connections.back().weight = stof(line.substr(0, pos));
+
+					line = line.substr(pos + 1);
+					pos = line.find(',');
+					if (pos == string::npos) {
+						cout << "Error while loading model" << endl;
+						throw 0;
+					}
+					genomes.back().connections.back().enabled = (line.substr(0, pos) == "1");
+
+					line = line.substr(pos + 1);
+					pos = line.find(',');
+					if (pos == string::npos) {
+						cout << "Error while loading model" << endl;
+						throw 0;
+					}
+					genomes.back().connections.back().isRecurrent = (line.substr(0, pos) == "1");
+
+					line = line.substr(pos + 1);
+					pos = line.find(',');
+				}
+			} else {
+				cout << "Error while loading model" << endl;
+				throw 0;
+			}
+		}
+
+		fileobj.close();
+	} else {
+		cout << "Error while loading model" << endl;
+		throw 0;
+	}
+}

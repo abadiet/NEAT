@@ -2,12 +2,14 @@
 
 #include "genome.cpp"
 #include "species.cpp"
+#include <cstring>
+#include <fstream>
 
 class Population{
 	private:
 		vector<vector<int>> innovIds;
 		int lastInnovId;
-		
+
 		int popSize;
 		float speciationThresh;
 		int threshGensSinceImproved;
@@ -17,7 +19,7 @@ class Population{
 		float probConnInit;	// only useful for creating new genome
 		bool areRecurrentConnectionsAllowed;
 		float weightExtremumInit;	// only useful for creating new genome
-		
+
 		float compareGenomes(int ig1, int ig2, float a, float b, float c);
 		void updateFitnesses();
 		int selectParent(int iSpe);
@@ -28,9 +30,10 @@ class Population{
 		float fitterGenomeId;
 		vector<Genome> genomes;
 		vector<Species> species;
-	
+
 		Population(int popSize, int nbInput, int nbOutput, int nbHiddenInit, float probConnInit, bool areRecurrentConnectionsAllowed = false, float weightExtremumInit = 20.0f, float speciationThreshInit = 100.0f, int threshGensSinceImproved = 15);
-		
+		Population(const string filepath) {load(filepath);};
+
 		void loadInputs(float inputs[]);
 		void loadInputs(float inputs[], int genomeId);
 		void runNetwork(float activationFn(float input));
@@ -44,4 +47,6 @@ class Population{
 		void mutate(float mutateWeightThresh = 0.8f, float mutateWeightFullChangeThresh = 0.1f, float mutateWeightFactor = 1.2f, float addConnectionThresh = 0.05f, int maxIterationsFindConnectionThresh = 20, float reactivateConnectionThresh = 0.25f, float addNodeThresh = 0.03f, int maxIterationsFindNodeThresh = 20);
 		void drawNetwork(int genomeId, sf::Vector2u windowSize = {1300, 800}, float dotsRadius = 6.5f);
 		void printInfo(bool extendedGlobal = false, bool printSpecies = false, bool printGenomes = false, bool extendedGenomes = false);
+		void save(const string filepath = "./neat_backup.txt");
+		void load(const string filepath = "./neat_backup.txt");
 };

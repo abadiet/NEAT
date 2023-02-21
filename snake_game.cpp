@@ -338,7 +338,7 @@ int main() {
     float c = 0.4f;
     
     float bestFitness = 0.0f;
-    while (bestFitness < 2300.0f && pop.generation < 5000) {
+    while (bestFitness < 2300.0f && pop.generation < 10) {
         cout << "generation " << pop.generation;
         pop.runNetworkAuto(snakeProcess, &snakeArgs, setupSnake, sigmoid, 500);
         pop.speciate(target, targetThresh, stepThresh, a, b, c);
@@ -359,6 +359,8 @@ int main() {
     // play a game by the fitter genome
     bool displayInConsole = false;
     playGame(&pop, pop.fitterGenomeId, nbInput, nbOutput, sigmoid, 500, displayInConsole);
+    
+    pop.save();
     
     return 0;
 }
