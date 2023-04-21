@@ -30,7 +30,7 @@ class Population{
 		int generation;
 		float avgFitness;
 		float avgFitnessAdjusted;
-		float fitterGenomeId;
+		int fitterGenomeId;
 		vector<Genome> genomes;
 		vector<Species> species;
 

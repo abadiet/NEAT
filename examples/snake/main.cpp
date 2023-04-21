@@ -7,7 +7,7 @@ using namespace std;
 
 float sigmoid(float x) {
     /* Will be our activation function */
-    return 1 / (1 + exp(-1 * 4.09 * x));
+    return (float) (1.0f / (1.0f + exp(-1 * 4.09 * x)));
 }
 
 struct args {
@@ -71,33 +71,33 @@ void drawPlaygroundSFML(struct args* snakeArgs, sf::RenderWindow* window, float 
         float displayFirstY;
         float displayFirstX;
         if (window->getSize().x > window->getSize().y) {
-            displayStep = 0.8 * window->getSize().y / snakeArgs->playgroundSize;
-            displayFirstY = 0.1 * window->getSize().y;
-            displayFirstX = (window->getSize().x - 0.8 * window->getSize().y) / 2;
+            displayStep = 0.8f * (float) (window->getSize().y / snakeArgs->playgroundSize);
+            displayFirstY = 0.1f * (float) window->getSize().y;
+            displayFirstX = (float) (window->getSize().x - 0.8 * window->getSize().y) / 2.0f;
         } else {
-            displayStep = 0.8 * window->getSize().x / snakeArgs->playgroundSize;
-            displayFirstX = 0.1 * window->getSize().x;
-            displayFirstY = (window->getSize().y - 0.8 * window->getSize().x) / 2;
+            displayStep = 0.8f * (float) window->getSize().x / (float) snakeArgs->playgroundSize;
+            displayFirstX = 0.1f * (float) window->getSize().x;
+            displayFirstY = (float) (window->getSize().y - 0.8 * window->getSize().x) / 2.0f;
         }
-        float snakeDotsRadius = 0.8 * (displayStep / 2);
-        float fruitDotsRadius = 0.8 * (displayStep / 2);
-        float emptyDotsRadius = 0.1 * (displayStep / 2);
+        float snakeDotsRadius = 0.8f * (displayStep / 2.0f);
+        float fruitDotsRadius = 0.8f * (displayStep / 2.0f);
+        float emptyDotsRadius = 0.1f * (displayStep / 2.0f);
         
         for (int i = 0; i < snakeArgs->playgroundSize; i++) {
             for (int j = 0; j < snakeArgs->playgroundSize; j++) {
                 if (isPosBusy(j + i * snakeArgs->playgroundSize, true, snakeArgs)) {
                     if (isPosBusy(j + i * snakeArgs->playgroundSize, false, snakeArgs)) {
 	                    dots[j + i * snakeArgs->playgroundSize].setRadius(snakeDotsRadius);
-	                    dots[j + i * snakeArgs->playgroundSize].setPosition({displayFirstX + displayStep * j - snakeDotsRadius, displayFirstY + displayStep * i - snakeDotsRadius});
+	                    dots[j + i * snakeArgs->playgroundSize].setPosition({displayFirstX + displayStep * (float) j - snakeDotsRadius, displayFirstY + displayStep * (float) i - snakeDotsRadius});
 	                    dots[j + i * snakeArgs->playgroundSize].setFillColor(sf::Color::Green);
                     } else {
 	                    dots[j + i * snakeArgs->playgroundSize].setRadius(fruitDotsRadius);
-	                    dots[j + i * snakeArgs->playgroundSize].setPosition({displayFirstX + displayStep * j - fruitDotsRadius, displayFirstY + displayStep * i - fruitDotsRadius});
+	                    dots[j + i * snakeArgs->playgroundSize].setPosition({displayFirstX + displayStep * (float) j - fruitDotsRadius, displayFirstY + displayStep * (float) i - fruitDotsRadius});
 	                    dots[j + i * snakeArgs->playgroundSize].setFillColor(sf::Color::Red);
                     }
                 } else {
                     dots[j + i * snakeArgs->playgroundSize].setRadius(emptyDotsRadius);
-                    dots[j + i * snakeArgs->playgroundSize].setPosition({displayFirstX + displayStep * j - emptyDotsRadius, displayFirstY + displayStep * i - emptyDotsRadius});
+                    dots[j + i * snakeArgs->playgroundSize].setPosition({displayFirstX + displayStep * (float) j - emptyDotsRadius, displayFirstY + displayStep * (float) i - emptyDotsRadius});
                     dots[j + i * snakeArgs->playgroundSize].setFillColor(sf::Color::White);
                 }
             }
@@ -179,22 +179,22 @@ void setupSnake(float inputsInit[], struct args* snakeArgs) {
     }
     
     // playground bounds
-    inputsInit[0] = snakeEyes((0 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    inputsInit[1] = snakeEyes((1 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    inputsInit[2] = snakeEyes((2 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    inputsInit[3] = snakeEyes((3 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    inputsInit[4] = snakeEyes((4 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    inputsInit[5] = snakeEyes((5 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    inputsInit[6] = snakeEyes((6 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    inputsInit[0] = (float) snakeEyes((0 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    inputsInit[1] = (float) snakeEyes((1 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    inputsInit[2] = (float) snakeEyes((2 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    inputsInit[3] = (float) snakeEyes((3 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    inputsInit[4] = (float) snakeEyes((4 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    inputsInit[5] = (float) snakeEyes((5 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    inputsInit[6] = (float) snakeEyes((6 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
     
     // fruit
-    inputsInit[7] = snakeEyes((0 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    inputsInit[8] = snakeEyes((1 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    inputsInit[9] = snakeEyes((2 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    inputsInit[10] = snakeEyes((3 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    inputsInit[11] = snakeEyes((4 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    inputsInit[12] = snakeEyes((5 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    inputsInit[13] = snakeEyes((6 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    inputsInit[7] = (float) snakeEyes((0 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    inputsInit[8] = (float) snakeEyes((1 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    inputsInit[9] = (float) snakeEyes((2 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    inputsInit[10] = (float) snakeEyes((3 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    inputsInit[11] = (float) snakeEyes((4 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    inputsInit[12] = (float) snakeEyes((5 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    inputsInit[13] = (float) snakeEyes((6 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
 }
 
 float snakeProcess(float inputs[], float outputs[], struct args* snakeArgs) {
@@ -257,22 +257,22 @@ float snakeProcess(float inputs[], float outputs[], struct args* snakeArgs) {
     snakeArgs->snake.push_back(newDot);
     // Get outputs. Those will be given to the network for the next generation
     // playground bounds
-    outputs[0] = snakeEyes((0 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    outputs[1] = snakeEyes((1 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    outputs[2] = snakeEyes((2 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    outputs[3] = snakeEyes((3 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    outputs[4] = snakeEyes((4 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    outputs[5] = snakeEyes((5 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
-    outputs[6] = snakeEyes((6 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    outputs[0] = (float) snakeEyes((0 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    outputs[1] = (float) snakeEyes((1 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    outputs[2] = (float) snakeEyes((2 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    outputs[3] = (float) snakeEyes((3 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    outputs[4] = (float) snakeEyes((4 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    outputs[5] = (float) snakeEyes((5 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
+    outputs[6] = (float) snakeEyes((6 + 2 * snakeArgs->curMvmt) % 8, false, snakeArgs);
     
     // fruit
-    outputs[7] = snakeEyes((0 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    outputs[8] = snakeEyes((1 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    outputs[9] = snakeEyes((2 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    outputs[10] = snakeEyes((3 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    outputs[11] = snakeEyes((4 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    outputs[12] = snakeEyes((5 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
-    outputs[13] = snakeEyes((6 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    outputs[7] = (float) snakeEyes((0 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    outputs[8] = (float) snakeEyes((1 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    outputs[9] = (float) snakeEyes((2 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    outputs[10] = (float) snakeEyes((3 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    outputs[11] = (float) snakeEyes((4 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    outputs[12] = (float) snakeEyes((5 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
+    outputs[13] = (float) snakeEyes((6 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
     
     snakeArgs->score += 0.1f;
     return -1.0f;  // game not finished
@@ -296,7 +296,7 @@ void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float ac
     
 	float procInputs[nbOutput];
 	float result = -1.0f;
-	float iteration = 0;
+	int iteration = 0;
 	while (iteration < maxIterationsThresh && result < 0.0f) {
 		pop->genomes[genomeId].loadInputs(procOutputs);
 		pop->genomes[genomeId].runNetwork(activationFn);
@@ -317,7 +317,7 @@ void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float ac
 }
 
 int main() {
-    srand(time(0));	// init seed for rand
+    srand((int) time(0));	// init seed for rand
     
     int popSize = 50;
     int nbInput = 14;
@@ -338,7 +338,7 @@ int main() {
     float c = 0.4f;
     
     float bestFitness = 0.0f;
-    while (bestFitness < 2300.0f && pop.generation < 5000) {
+    while (bestFitness < 2500.0f && pop.generation < 5000) {
         cout << "generation " << pop.generation;
         pop.runNetworkAuto(snakeProcess, &snakeArgs, setupSnake, sigmoid, 500);
         pop.speciate(target, targetThresh, stepThresh, a, b, c);
@@ -358,7 +358,7 @@ int main() {
     
     // play a game by the fitter genome
     bool displayInConsole = false;
-    playGame(&pop, pop.fitterGenomeId, nbInput, nbOutput, sigmoid, 500, displayInConsole);
+    playGame(&pop, pop.fitterGenomeId, nbInput, nbOutput, sigmoid, 500, displayInConsole, {800, 600}, 0.12f);
     
     pop.save();
     

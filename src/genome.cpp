@@ -35,9 +35,9 @@ Genome::Genome(int nbInput, int nbOutput, int nbHiddenInit, float probConnInit, 
 	// input -> hidden
 	for (int inNodeId = 0; inNodeId < nbInput + 1; inNodeId++) {	// input
 		for (int outNodeId = nbInput + 1 + nbOutput; outNodeId < nbInput + 1 + nbOutput + nbHiddenInit; outNodeId++) {	// hidden
-			if (rand()/(double) RAND_MAX <= probConnInit) {
+			if ((float) rand() / (float) RAND_MAX <= probConnInit) {
 				int innovId = getInnovId(innovIds, lastInnovId, inNodeId, outNodeId);
-				float weight = rand()/(double) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;	// random number in [-weightExtremumInit; weightExtremumInit]
+				float weight = (float) rand() / (float) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;	// random number in [-weightExtremumInit; weightExtremumInit]
 				connections.push_back(Connection(innovId, inNodeId, outNodeId, weight, true, false));
 			}
 		}
@@ -45,9 +45,9 @@ Genome::Genome(int nbInput, int nbOutput, int nbHiddenInit, float probConnInit, 
 	// hidden -> output
 	for (int inNodeId = nbInput + 1 + nbOutput; inNodeId < nbInput + 1 + nbOutput + nbHiddenInit; inNodeId++) {	// hidden
 		for (int outNodeId = nbInput + 1; outNodeId < nbInput + 1 + nbOutput; outNodeId++) {	// output
-			if (rand()/(double) RAND_MAX <= probConnInit) {
+			if ((float) rand() / (float) RAND_MAX <= probConnInit) {
 				int innovId = getInnovId(innovIds, lastInnovId, inNodeId, outNodeId);
-				float weight = rand()/(double) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;	// random number in [-weightExtremumInit; weightExtremumInit]
+				float weight = (float) rand() / (float) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;	// random number in [-weightExtremumInit; weightExtremumInit]
 				connections.push_back(Connection(innovId, inNodeId, outNodeId, weight, true, false));
 			}
 		}
@@ -55,9 +55,9 @@ Genome::Genome(int nbInput, int nbOutput, int nbHiddenInit, float probConnInit, 
 	// input -> output
 	for (int inNodeId = 0; inNodeId < nbInput + 1; inNodeId++) {	// input
 		for (int outNodeId = nbInput + 1; outNodeId < nbInput + 1 + nbOutput; outNodeId++) {	// output
-			if (rand()/(double) RAND_MAX <= probConnInit) {
+			if ((float) rand() / (float) RAND_MAX <= probConnInit) {
 				int innovId = getInnovId(innovIds, lastInnovId, inNodeId, outNodeId);
-				float weight = rand()/(double) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;	// random number in [-weightExtremumInit; weightExtremumInit]
+				float weight = (float) rand() / (float) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;	// random number in [-weightExtremumInit; weightExtremumInit]
 				connections.push_back(Connection(innovId, inNodeId, outNodeId, weight, true, false));
 			}
 		}
@@ -142,9 +142,9 @@ void Genome::getOutputs(float outputs[]) {
 
 void Genome::mutate(vector<vector<int>>* innovIds, int* lastInnovId, bool areRecurrentConnectionsAllowed, float mutateWeightThresh, float mutateWeightFullChangeThresh, float mutateWeightFactor, float addConnectionThresh, int maxIterationsFindConnectionThresh, float reactivateConnectionThresh, float addNodeThresh, int maxIterationsFindNodeThresh) {
 	// ### WEIGHTS ###
-	float randomNb = rand() / (double) RAND_MAX;
-	while (randomNb == 1.0f) {
-		randomNb = rand() / (double) RAND_MAX;
+	float randomNb = (float) rand() / (float) RAND_MAX;
+	while (randomNb < 1.0f + 1e-10 && randomNb > 1.0f - 1e-10) {	// == 1
+		randomNb = (float) rand() / (float) RAND_MAX;
 	}	// generate a random value in [0,1)
 	if (randomNb < mutateWeightThresh) {
 		// mutating weights
@@ -152,9 +152,9 @@ void Genome::mutate(vector<vector<int>>* innovIds, int* lastInnovId, bool areRec
 	}
 	
 	// ### CONNECTIONS ###
-	randomNb = rand() / (double) RAND_MAX;
-	while (randomNb == 1.0f) {
-		randomNb = rand() / (double) RAND_MAX;
+	randomNb = (float) rand() / (float) RAND_MAX;
+	while (randomNb < 1.0f + 1e-10 && randomNb > 1.0f - 1e-10) {	// == 1
+		randomNb = (float) rand() / (float) RAND_MAX;
 	}	// generate a random value in [0,1)
 	if (randomNb < addConnectionThresh) {
 		// adding a conection
@@ -162,9 +162,9 @@ void Genome::mutate(vector<vector<int>>* innovIds, int* lastInnovId, bool areRec
 	}
 	
 	// ### NODES ###
-	randomNb = rand() / (double) RAND_MAX;
-	while (randomNb == 1.0f) {
-		randomNb = rand() / (double) RAND_MAX;
+	randomNb = (float) rand() / (float) RAND_MAX;
+	while (randomNb < 1.0f + 1e-10 && randomNb > 1.0f - 1e-10) {	// == 1
+		randomNb = (float) rand() / (float) RAND_MAX;
 	}	// generate a random value in [0,1)
 	if (randomNb < addNodeThresh) {
 		// adding a node
@@ -174,16 +174,16 @@ void Genome::mutate(vector<vector<int>>* innovIds, int* lastInnovId, bool areRec
 
 void Genome::mutateWeights(float mutateWeightFullChangeThresh, float mutateWeightFactor) {
 	for (int i = 0; i < (int) connections.size(); i++) {
-		float randomNb = rand() / (double) RAND_MAX;
-		while (randomNb == 1.0f) {
-			randomNb = rand() / (double) RAND_MAX;
+		float randomNb = (float) rand() / (float) RAND_MAX;
+		while (randomNb < 1.0f + 1e-10 && randomNb > 1.0f - 1e-10) {	// == 1
+			randomNb = (float) rand() / (float) RAND_MAX;
 		}	// generate a random value in [0,1)
 		if (randomNb < mutateWeightFullChangeThresh) {
 			// reset weight
-			connections[i].weight = rand() / (double) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;
+			connections[i].weight = (float) rand() / (float) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;
 		} else {
 			// pertub weight
-			connections[i].weight *= rand() / (double) RAND_MAX * 2 * mutateWeightFactor - mutateWeightFactor;
+			connections[i].weight *= (float) rand() / (float) RAND_MAX * 2 * mutateWeightFactor - mutateWeightFactor;
 		}
 	}
 }
@@ -204,9 +204,9 @@ bool Genome::addConnection(vector<vector<int>>* innovIds, int* lastInnovId, int 
 	if (iterationNb < maxIterationsFindConnectionThresh) {	// a valid connection has been found
 		// mutating
 		if (isValid == 2) {	// it is a former connection
-			float randomNb = rand() / (double) RAND_MAX;
-			while (randomNb == 1.0f) {
-				randomNb = rand() / (double) RAND_MAX;
+			float randomNb = (float) rand() / (float) RAND_MAX;
+			while ((int) randomNb == 1) {
+				randomNb = (float) rand() / (float) RAND_MAX;
 			}	// generate a random value in [0,1)
 			if (randomNb < reactivateConnectionThresh) {
 				// search the connection
@@ -226,7 +226,7 @@ bool Genome::addConnection(vector<vector<int>>* innovIds, int* lastInnovId, int 
 			}
 		} else {
 			int innovId = getInnovId(innovIds, lastInnovId, inNodeId, outNodeId);
-			float weight = rand()/(double) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;	// random number in [-weightExtremumInit; weightExtremumInit]
+			float weight = (float) rand() / (float) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;	// random number in [-weightExtremumInit; weightExtremumInit]
 			bool recurrent = false;
 			if (isValid == 3) {
 				recurrent = true;
@@ -289,7 +289,7 @@ bool Genome::addNode(vector<vector<int>>* innovIds, int* lastInnovId, int maxIte
 			inNodeId = newNodeId;
 			outNodeId = connections[iConn].outNodeId;
 			innovId = getInnovId(innovIds, lastInnovId, inNodeId, outNodeId);
-			weight = rand()/(double) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;	// random number in [-weightExtremumInit; weightExtremumInit]
+			weight = (float) rand() / (float) RAND_MAX * 2 * weightExtremumInit - weightExtremumInit;	// random number in [-weightExtremumInit; weightExtremumInit]
 			connections.push_back(Connection(innovId, inNodeId, outNodeId, weight, true, false));
 			
 			// update layers
@@ -373,21 +373,21 @@ void Genome::drawNetwork(sf::Vector2u windowSize, float dotsRadius) {
 
 	// variables for position x
 	float firstLayerX = 200;
-	float stepX = (0.9 * windowSize.x - firstLayerX)/ (nbLayer - 1);
+	float stepX = (float) (0.9 * windowSize.x - firstLayerX) / (float) (nbLayer - 1);
 
 	// input
 	for (int i = 0; i < 1 + nbInput; i++) {
-		dots[i].setPosition({firstLayerX + stepX * nodes[i].layer - dotsRadius, (float) (0.1 * windowSize.y + i * 0.8 * windowSize.y / nbInput - dotsRadius)});
-		dotsText[i].setPosition({firstLayerX + stepX * nodes[i].layer - dotsRadius, (float) (0.1 * windowSize.y + i * 0.8 * windowSize.y / nbInput + 4.0)});
+		dots[i].setPosition({(float) (firstLayerX + stepX * (float) nodes[i].layer - (float) dotsRadius), (float) (0.1 * windowSize.y + i * 0.8 * windowSize.y / nbInput - (float) dotsRadius)});
+		dotsText[i].setPosition({(float) (firstLayerX + stepX * (float) nodes[i].layer - dotsRadius), (float) (0.1 * windowSize.y + i * 0.8 * windowSize.y / nbInput + 4.0)});
 	}
 	// output
 	if (nbOutput == 1) {	// if there is only one node, we draw it on the middle of y
-		dots[1 + nbInput].setPosition({firstLayerX + stepX * nodes[1 + nbInput].layer - dotsRadius, (float) (0.5 * windowSize.y  - dotsRadius)});
-		dotsText[1 + nbInput].setPosition({firstLayerX + stepX * nodes[1 + nbInput].layer - dotsRadius, (float) (0.5 * windowSize.y + 4.0)});
+		dots[1 + nbInput].setPosition({(float) (firstLayerX + stepX * (float) nodes[1 + nbInput].layer - dotsRadius), (float) (0.5 * windowSize.y  - dotsRadius)});
+		dotsText[1 + nbInput].setPosition({(float) (firstLayerX + stepX * (float) nodes[1 + nbInput].layer - dotsRadius), (float) (0.5 * windowSize.y + 4.0)});
 	} else {
 		for (int i = 1 + nbInput; i < 1 + nbInput + nbOutput; i++) {
-			dots[i].setPosition({firstLayerX + stepX * nodes[i].layer - dotsRadius, (float) (0.1 * windowSize.y + (i - (1 + nbInput)) * 0.8 * windowSize.y / (nbOutput - 1) - dotsRadius)});
-			dotsText[i].setPosition({firstLayerX + stepX * nodes[i].layer - dotsRadius, (float) (0.1 * windowSize.y + (i - (1 + nbInput)) * 0.8 * windowSize.y / (nbOutput - 1) + 4.0)});
+			dots[i].setPosition({(float) (firstLayerX + stepX * (float) nodes[i].layer - dotsRadius), (float) (0.1 * windowSize.y + (i - (1 + nbInput)) * 0.8 * windowSize.y / (nbOutput - 1) - dotsRadius)});
+			dotsText[i].setPosition({(float) (firstLayerX + stepX * (float) nodes[i].layer - dotsRadius), (float) (0.1 * windowSize.y + (i - (1 + nbInput)) * 0.8 * windowSize.y / (nbOutput - 1) + 4.0)});
 		}
 	}
 	// other
@@ -399,12 +399,12 @@ void Genome::drawNetwork(sf::Vector2u windowSize, float dotsRadius) {
 			}
 		}
 		if ((int) iNodesiLayer.size() == 1) {	// if there is only one node, we draw it on the middle of y
-			dots[iNodesiLayer[0]].setPosition({firstLayerX + stepX * nodes[iNodesiLayer[0]].layer - dotsRadius, (float) (0.5 * windowSize.y - dotsRadius)});
-			dotsText[iNodesiLayer[0]].setPosition({firstLayerX + stepX * nodes[iNodesiLayer[0]].layer - dotsRadius, (float) (0.5 * windowSize.y + 4.0)});
+			dots[iNodesiLayer[0]].setPosition({(float) (firstLayerX + stepX * (float) nodes[iNodesiLayer[0]].layer - dotsRadius), (float) (0.5 * windowSize.y - dotsRadius)});
+			dotsText[iNodesiLayer[0]].setPosition({(float) (firstLayerX + stepX * (float) nodes[iNodesiLayer[0]].layer - dotsRadius), (float) (0.5 * windowSize.y + 4.0)});
 		} else {
 			for (int i = 0; i < (int) iNodesiLayer.size(); i++) {
-				dots[iNodesiLayer[i]].setPosition({firstLayerX + stepX * nodes[iNodesiLayer[i]].layer - dotsRadius, (float) (0.1 * windowSize.y + i * 0.8 * windowSize.y / ((int) iNodesiLayer.size() - 1) - dotsRadius)});
-				dotsText[iNodesiLayer[i]].setPosition({firstLayerX + stepX * nodes[iNodesiLayer[i]].layer - dotsRadius, (float) (0.1 * windowSize.y + i * 0.8 * windowSize.y / ((int) iNodesiLayer.size() - 1) + 4.0)});
+				dots[iNodesiLayer[i]].setPosition({(float) (firstLayerX + stepX * (float) nodes[iNodesiLayer[i]].layer - dotsRadius), (float) (0.1 * windowSize.y + i * 0.8 * windowSize.y / ((int) iNodesiLayer.size() - 1) - dotsRadius)});
+				dotsText[iNodesiLayer[i]].setPosition({(float) (firstLayerX + stepX * (float) nodes[iNodesiLayer[i]].layer - dotsRadius), (float) (0.1 * windowSize.y + i * 0.8 * windowSize.y / ((int) iNodesiLayer.size() - 1) + 4.0)});
 			}
 		}
 	}
@@ -431,18 +431,18 @@ void Genome::drawNetwork(sf::Vector2u windowSize, float dotsRadius) {
 
 		// weighted connections
 		if (connections[i].weight / maxWeight > 0.0) {
-			float ratioColor = pow(connections[i].weight / maxWeight, 0.3);
-			color.r *= ratioColor;
-			color.g *= ratioColor;
-			color.b *= ratioColor;
+			float ratioColor = (float) pow(connections[i].weight / maxWeight, 0.3);
+			color.r = static_cast<sf::Uint8>(color.r * ratioColor);
+			color.g = static_cast<sf::Uint8>(color.g * ratioColor);
+			color.b = static_cast<sf::Uint8>(color.b * ratioColor);
 		} else {
-			if (connections[i].weight == 0.0) {
+			if (connections[i].weight < 1e-10) {	// == 0
 				color = sf::Color::Black;	// Warnings: works because bakground is black !
 			} else {
-				float ratioColor = pow(-1 * connections[i].weight / maxWeight, 0.4);
-				color.r *= ratioColor;
-				color.g *= ratioColor;
-				color.b *= ratioColor;
+				float ratioColor = (float) pow(-1 * connections[i].weight / maxWeight, 0.4);
+				color.r = static_cast<sf::Uint8>(color.r * ratioColor);
+				color.g = static_cast<sf::Uint8>(color.g * ratioColor);
+				color.b = static_cast<sf::Uint8>(color.b * ratioColor);
 			}
 		}
 

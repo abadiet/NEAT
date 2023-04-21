@@ -9,7 +9,7 @@ class Node{
 		float sumOutput;
 
 		Node(int id, int layer);
-		Node () {};
+		Node() {};
 
 };
 

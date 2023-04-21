@@ -188,9 +188,9 @@ float Population::compareGenomes(int ig1, int ig2, float a, float b, float c) {
 	}
 	
 	if (nbCommonGenes > 0) {
-		return (a * excessGenes + b * disjointGenes) / max((int) connEnabled1.size(), (int) connEnabled2.size()) + c * sumDiffWeights / nbCommonGenes;
+		return (a * (float) excessGenes + b * (float) disjointGenes) / (float) max((int) connEnabled1.size(), (int) connEnabled2.size()) + c * sumDiffWeights / (float) nbCommonGenes;
 	} else {
-		return numeric_limits<float>::max();	// is there a better way?
+		return numeric_limits<float>::max();	// TODO: is there a better way?
 	}
 }
 
@@ -206,7 +206,7 @@ void Population::updateFitnesses() {
 		}
 	}
 	
-	avgFitness /= popSize;
+	avgFitness /= (float) popSize;
 	
 	for (int i = 0; i < (int) species.size(); i++) {
 		if (!species[i].isDead) {
@@ -215,25 +215,25 @@ void Population::updateFitnesses() {
 				species[i].sumFitness += genomes[species[i].members[j]].fitness;
 			}
 			
-			if (species[i].sumFitness / (int) species[i].members.size() > species[i].avgFitness) {	// the avgFitness of the species has increased
+			if (species[i].sumFitness / (float) species[i].members.size() > species[i].avgFitness) {	// the avgFitness of the species has increased
 				species[i].gensSinceImproved  = 0;
 			} else {
 				species[i].gensSinceImproved ++;
 			}
 			
-			species[i].avgFitness = species[i].sumFitness / (int) species[i].members.size();
-			species[i].avgFitnessAdjusted = species[i].avgFitness / (int) species[i].members.size();
+			species[i].avgFitness = species[i].sumFitness / (float) species[i].members.size();
+			species[i].avgFitnessAdjusted = species[i].avgFitness / (float) species[i].members.size();
 			
 			avgFitnessAdjusted += species[i].avgFitness;
 		}
 	}
 	
-	avgFitnessAdjusted /= popSize;
+	avgFitnessAdjusted /= (float) popSize;
 	
 	for (int i = 0; i < (int) species.size(); i++) {
 		if (!species[i].isDead) {
 			if (species[i].gensSinceImproved < threshGensSinceImproved) {
-				species[i].allowedOffspring = (int) ((int) species[i].members.size() * species[i].avgFitnessAdjusted / (avgFitnessAdjusted + numeric_limits<float>::min()));	// note that (int) 0.9f == 0.0f	// numeric_limits<float>::min() = minimum positive value of float
+				species[i].allowedOffspring = (int) ((float) species[i].members.size() * species[i].avgFitnessAdjusted / (avgFitnessAdjusted + numeric_limits<float>::min()));	// note that (int) 0.9f == 0.0f	// numeric_limits<float>::min() = minimum positive value of float
 			} else {
 				species[i].allowedOffspring = 0;
 			}
@@ -322,9 +322,9 @@ void Population::crossover(bool elitism) {
 int Population::selectParent(int iSpe) {
 	/* Chooses player from the population to return randomly(considering fitness). This works by randomly choosing a value between 0 and the sum of all the fitnesses then go through all the dots and add their fitness to a running sum and if that sum is greater than the random value generated that dot is chosen since players with a higher fitness function add more to the running sum then they have a higher chance of being chosen */
 	// build a random threshold in [0, sumFitness)
-	float randThresh = rand()/(double) (RAND_MAX);
-	while (randThresh == 1.0f) {
-		randThresh = rand()/(double) (RAND_MAX);
+	float randThresh = (float) rand()/(float) (RAND_MAX);
+	while (randThresh < 1.0f + 1e-10 && randThresh > 1.0f - 1e-10) {	// == 1
+		randThresh = (float) rand()/(float) (RAND_MAX);
 	}
 	randThresh *= species[iSpe].sumFitness;
 	
@@ -607,7 +607,7 @@ void Population::load(const string filepath){
 						cout << "Error while loading model" << endl;
 						throw 0;
 					}
-					genomes.back().nodes.back().sumInput = stod(line.substr(0, pos));	// stdof's range is not the float's one... weird, anyway it works with stod of course
+					genomes.back().nodes.back().sumInput = (float) stod(line.substr(0, pos));	// stdof's range is not the float's one... weird, anyway it works with stod of course
 
 					line = line.substr(pos + 1);
 					pos = line.find(',');
@@ -615,7 +615,7 @@ void Population::load(const string filepath){
 						cout << "Error while loading model" << endl;
 						throw 0;
 					}
-					genomes.back().nodes.back().sumOutput = stod(line.substr(0, pos));	// stdof's range is not the float's one... weird, anyway it works with stod of course
+					genomes.back().nodes.back().sumOutput = (float) stod(line.substr(0, pos));	// stdof's range is not the float's one... weird, anyway it works with stod of course
 
 					line = line.substr(pos + 1);
 					pos = line.find(',');
