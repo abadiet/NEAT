@@ -1,9 +1,12 @@
-#pragma once
+#ifndef POPULATION_HPP
+#define POPULATION_HPP
 
-#include "genome.cpp"
-#include "species.cpp"
+#include "genome.hpp"
+#include "species.hpp"
 #include <cstring>
 #include <fstream>
+#include <iostream>
+#include <limits>
 
 class Population{
 	private:
@@ -50,3 +53,5 @@ class Population{
 		void save(const string filepath = "./neat_backup.txt");
 		void load(const string filepath = "./neat_backup.txt");
 };
+
+#endif	// POPULATION_HPP

@@ -344,7 +344,7 @@ void Genome::updateLayersRec(int nodeId) {
 }
 
 void Genome::drawNetwork(sf::Vector2u windowSize, float dotsRadius) {
-	sf::RenderWindow window(sf::VideoMode(windowSize), "NEAT - Titofra");
+	sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "NEAT - Titofra");
     
     sf::CircleShape dots[nodes.size()];
 	sf::Text dotsText[nodes.size()];

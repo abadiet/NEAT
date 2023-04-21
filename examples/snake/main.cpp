@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-#include "population.cpp"
+#include <population.hpp>
 #include <SFML/Graphics.hpp>
 
 using namespace std;
@@ -279,7 +279,7 @@ float snakeProcess(float inputs[], float outputs[], struct args* snakeArgs) {
 }
 
 void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float activationFn(float input), int maxIterationsThresh, bool displayConsole = true, sf::Vector2u windowSize = {800, 600}, float timeUpsSeconds = 0.7f) {
-    sf::RenderWindow window(sf::VideoMode(windowSize), "NEAT - Titofra");
+    sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "NEAT - Titofra");
     
     /* Print a game played by the genome of id genomeId in population pop */
     args snakeArgs;

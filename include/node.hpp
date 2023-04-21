@@ -1,4 +1,5 @@
-#pragma once
+#ifndef NODE_HPP
+#define NODE_HPP
 
 class Node{
 	public:
@@ -11,3 +12,5 @@ class Node{
 		Node () {};
 
 };
+
+#endif	// NODE_HPP

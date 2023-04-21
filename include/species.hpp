@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SPECIES_HPP
+#define SPECIES_HPP
 
 #include <vector>
 
@@ -17,3 +18,5 @@ class Species{
 
 		Species(int id);
 };
+
+#endif	// SPECIES_HPP

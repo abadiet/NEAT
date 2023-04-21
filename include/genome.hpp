@@ -1,7 +1,8 @@
-#pragma once
+#ifndef GENOME_HPP
+#define GENOME_HPP
 
-#include "node.cpp"
-#include "connection.cpp"
+#include "node.hpp"
+#include "connection.hpp"
 #include <vector>
 #include <SFML/Graphics.hpp>
 
@@ -33,3 +34,5 @@ class Genome{
 		void mutate(vector<vector<int>>* innovIds, int* lastInnovId, bool areRecurrentConnectionsAllowed = false, float mutateWeightThresh = 0.8f, float mutateWeightFullChangeThresh = 0.1f, float mutateWeightFactor = 1.2f, float addConnectionThresh = 0.05f, int maxIterationsFindConnectionThresh = 20, float reactivateConnectionThresh = 0.25f, float addNodeThresh = 0.03f, int maxIterationsFindNodeThresh = 20);
 		void drawNetwork(sf::Vector2u windowSize = {1300, 800}, float dotsRadius = 6.5f);
 };
+
+#endif	// GENOME_HPP

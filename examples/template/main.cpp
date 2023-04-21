@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-#include "population.cpp"
+#include <population.hpp>
 
 using namespace std;
 
