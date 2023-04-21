@@ -4,7 +4,7 @@ This repo is a library for evolving neural networks with NEAT written C.
 
 <p align="center">
     <video width="700" loop muted autoplay >
-	    <source src="https://raw.githubusercontent.com/titofra/NEAT/master/resources/snakeNEAT.webm" type="video/mp4">
+	    <source src="https://github.com/titofra/NEAT/raw/main/resources/snakeNEAT.webm" type="video/mp4">
         Your browser does not support the video tag.
     </video>
 </p>
