@@ -338,7 +338,7 @@ int main() {
     float c = 0.4f;
     
     float bestFitness = 0.0f;
-    while (bestFitness < 2500.0f && pop.generation < 5000) {
+    while (bestFitness < 3000.0f && pop.generation < 10000) {
         cout << "generation " << pop.generation;
         pop.runNetworkAuto(snakeProcess, &snakeArgs, setupSnake, sigmoid, 500);
         pop.speciate(target, targetThresh, stepThresh, a, b, c);

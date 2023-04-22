@@ -2,11 +2,15 @@
 
 This repo is a library for evolving neural networks with NEAT written C.
 
+<p align="center">
+	<img src="https://github.com/titofra/NEAT/raw/main/resources/network.jpeg" width="700">
+</p>
+
 ## What
 [Neuroevolution of augmenting topologies (NEAT)](https://en.wikipedia.org/wiki/Neuroevolution_of_augmenting_topologies) is a machine learning technique used for evolving artificial neural networks. NEAT uses a genetic algorithm to optimize the topology, weights, and activation functions of neural networks to solve a given problem. It allows the networks to evolve and adapt over time by adding or removing neurons and connections. NEAT is often used for complex tasks such as game playing and robotics, where traditional hand-designed neural networks may not be effective.
 
 ## Examples
-A skeleton project can be found in /examples/template/. Moreover, a Snake AI powered by NEAT is available in /examples/snake/.
+A skeleton project can be found in [/examples/template/](https://github.com/titofra/NEAT/tree/main/examples/template). Moreover, a Snake AI powered by NEAT is available in [/examples/snake/](https://github.com/titofra/NEAT/tree/main/examples/snake).
 
 [resources_snakeNEAT.webm](https://user-images.githubusercontent.com/120715525/233745593-d2044124-56b4-4479-91bd-f73eb2f2e5ab.webm)
 
