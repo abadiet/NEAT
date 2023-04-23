@@ -3,7 +3,7 @@
 This repo is a library for evolving neural networks with NEAT written C.
 
 <p align="center">
-	<img src="https://github.com/titofra/NEAT/raw/main/resources/network.jpeg" width="700">
+	<img src="https://github.com/titofra/NEAT/raw/main/resources/network.png" width="700">
 </p>
 
 ## What
