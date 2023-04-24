@@ -1,9 +1,7 @@
 #include <iostream>
 #include <cmath>
-#include <population.hpp>
+#include <NEAT/population.hpp>
 #include <SFML/Graphics.hpp>
-
-using namespace std;
 
 float sigmoid(float x) {
     /* Will be our activation function */
@@ -15,7 +13,7 @@ struct args {
     float score;
     int playgroundSize;
     int curMvmt;
-    vector<int> snake;
+    std::vector<int> snake;
     int fruit;
 } snakeArgs;
 
@@ -35,18 +33,18 @@ void drawPlaygroundConsole(struct args* snakeArgs) {
         for (int j = 0; j < snakeArgs->playgroundSize; j++) {
             if (isPosBusy(j + i * snakeArgs->playgroundSize, true, snakeArgs)) {
                 if (isPosBusy(j + i * snakeArgs->playgroundSize, false, snakeArgs)) {
-                    cout << " o ";
+                    std::cout << " o ";
                 } else {
-                    cout << " # ";
+                    std::cout << " # ";
                 }
             } else {
-                cout << " . ";
+                std::cout << " . ";
             }
         }
-        cout << endl;
+        std::cout << std::endl;
     }
     
-    cout << endl;
+    std::cout << std::endl;
 }
 
 void drawPlaygroundSFML(struct args* snakeArgs, sf::RenderWindow* window, float timeUpsSeconds) {
@@ -122,7 +120,7 @@ int snakeEyes(int orientation, bool detectFruit, struct args* snakeArgs) {
     int orientationFactor;
     switch (orientation) {
         case 0: // ↖
-            range =  min(curYHeadPos, curXHeadPos);
+            range =  std::min(curYHeadPos, curXHeadPos);
             orientationFactor = -1 * snakeArgs->playgroundSize - 1;
         break;
         case 1: // ↑
@@ -130,7 +128,7 @@ int snakeEyes(int orientation, bool detectFruit, struct args* snakeArgs) {
             orientationFactor = -1 * snakeArgs->playgroundSize;
         break;
         case 2: // ↗
-            range = min(curYHeadPos, snakeArgs->playgroundSize - curXHeadPos - 1);
+            range = std::min(curYHeadPos, snakeArgs->playgroundSize - curXHeadPos - 1);
             orientationFactor = -1 * snakeArgs->playgroundSize + 1;
         break;
         case 3: // →
@@ -138,7 +136,7 @@ int snakeEyes(int orientation, bool detectFruit, struct args* snakeArgs) {
             orientationFactor = 1;
         break;
         case 4: // ↘
-            range = min(snakeArgs->playgroundSize - curYHeadPos - 1, snakeArgs->playgroundSize - curXHeadPos - 1);
+            range = std::min(snakeArgs->playgroundSize - curYHeadPos - 1, snakeArgs->playgroundSize - curXHeadPos - 1);
             orientationFactor = snakeArgs->playgroundSize + 1;
         break;
         case 5: // ↓
@@ -146,7 +144,7 @@ int snakeEyes(int orientation, bool detectFruit, struct args* snakeArgs) {
             orientationFactor = snakeArgs->playgroundSize;
         break;
         case 6: // ↙
-            range = min(snakeArgs->playgroundSize - curYHeadPos - 1, curXHeadPos);
+            range = std::min(snakeArgs->playgroundSize - curYHeadPos - 1, curXHeadPos);
             orientationFactor = snakeArgs->playgroundSize - 1;
         break;
         case 7: // ←
@@ -154,7 +152,7 @@ int snakeEyes(int orientation, bool detectFruit, struct args* snakeArgs) {
             orientationFactor = - 1;
         break;
         default :
-            cout << "Error: invalid orientation: " << orientation << endl;
+            std::cout << "Error: invalid orientation: " << orientation << std::endl;
             return -1;
         break;
     }
@@ -166,7 +164,9 @@ int snakeEyes(int orientation, bool detectFruit, struct args* snakeArgs) {
     return i;
 }
 
-void setupSnake(float inputsInit[], struct args* snakeArgs) {
+void setupSnake(float inputsInit[], void* snakeArgs_void) {
+    struct args* snakeArgs = (struct args*) snakeArgs_void;
+
     /* initialise snakeArgs and first inputs */
     snakeArgs->playgroundSize = 8;
     snakeArgs->score = 0;
@@ -197,7 +197,9 @@ void setupSnake(float inputsInit[], struct args* snakeArgs) {
     inputsInit[13] = (float) snakeEyes((6 + 2 * snakeArgs->curMvmt) % 8, true, snakeArgs);
 }
 
-float snakeProcess(float inputs[], float outputs[], struct args* snakeArgs) {
+float snakeProcess(float inputs[], float outputs[], void* snakeArgs_void) {
+    struct args* snakeArgs = (struct args*) snakeArgs_void;
+
     /* The main function of the game: move the snake's part relatively to the inputs, refresh state, add fruits ... */
     // new Mvmt
     if (inputs[2] > 0.5 && inputs[2] > inputs[1] && inputs[2] > inputs[0]) {   // turn right
@@ -228,7 +230,7 @@ float snakeProcess(float inputs[], float outputs[], struct args* snakeArgs) {
             newDot = previousDot - snakeArgs->playgroundSize;
         break;
         default :
-            cout << "Error: invalid curMvmt: " << snakeArgs->curMvmt << endl;
+            std::cout << "Error: invalid curMvmt: " << snakeArgs->curMvmt << std::endl;
             return -1;
         break;
     }
@@ -278,7 +280,7 @@ float snakeProcess(float inputs[], float outputs[], struct args* snakeArgs) {
     return -1.0f;  // game not finished
 }
 
-void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float activationFn(float input), int maxIterationsThresh, bool displayConsole = true, sf::Vector2u windowSize = {800, 600}, float timeUpsSeconds = 0.7f) {
+void playGame(neat::Population* pop, int genomeId, int nbInput, int nbOutput, float activationFn(float input), int maxIterationsThresh, bool displayConsole = true, sf::Vector2u windowSize = {800, 600}, float timeUpsSeconds = 0.7f) {
     sf::RenderWindow window(sf::VideoMode(windowSize.x, windowSize.y), "NEAT - Titofra");
     
     /* Print a game played by the genome of id genomeId in population pop */
@@ -313,7 +315,7 @@ void playGame(Population* pop, int genomeId, int nbInput, int nbOutput, float ac
 		iteration ++;
 	}
 	
-	cout << "final score: " << result << endl;
+	std::cout << "final score: " << result << std::endl;
 }
 
 int main() {
@@ -328,7 +330,7 @@ int main() {
     float weightExtremumInit = 20.0f;
     float speciationThreshInit = 100.0f;
     int threshGensSinceImproved = 15;
-    Population pop(popSize, nbInput, nbOutput, nbHiddenInit, probConnInit, areRecurrentConnectionsAllowed, weightExtremumInit, speciationThreshInit, threshGensSinceImproved);
+    neat::Population pop(popSize, nbInput, nbOutput, nbHiddenInit, probConnInit, areRecurrentConnectionsAllowed, weightExtremumInit, speciationThreshInit, threshGensSinceImproved);
     
     int target = 5;
     int targetThresh = 0;
@@ -339,11 +341,11 @@ int main() {
     
     float bestFitness = 0.0f;
     while (bestFitness < 3000.0f && pop.generation < 10000) {
-        cout << "generation " << pop.generation;
+        std::cout << "generation " << pop.generation;
         pop.runNetworkAuto(snakeProcess, &snakeArgs, setupSnake, sigmoid, 500);
         pop.speciate(target, targetThresh, stepThresh, a, b, c);
         bestFitness = pop.genomes[pop.fitterGenomeId].fitness;
-        cout << "  - best fitness: " << bestFitness << endl;
+        std::cout << "  - best fitness: " << bestFitness << std::endl;
         pop.crossover();
         pop.mutate();
     }

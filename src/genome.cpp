@@ -1,12 +1,12 @@
-#include "genome.hpp"
+#include <NEAT/genome.hpp>
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
 #include <cmath>
 
-using namespace std;
+using namespace neat;
 
-Genome::Genome(int nbInput, int nbOutput, int nbHiddenInit, float probConnInit, vector<vector<int>>* innovIds, int* lastInnovId, float weightExtremumInit): weightExtremumInit(weightExtremumInit), nbInput(nbInput), nbOutput(nbOutput){
+Genome::Genome(int nbInput, int nbOutput, int nbHiddenInit, float probConnInit, std::vector<std::vector<int>>* innovIds, int* lastInnovId, float weightExtremumInit): weightExtremumInit(weightExtremumInit), nbInput(nbInput), nbOutput(nbOutput){
 	speciesId = -1;
 	// NODES
 	// bias
@@ -64,7 +64,7 @@ Genome::Genome(int nbInput, int nbOutput, int nbHiddenInit, float probConnInit, 
 	}
 }
 
-int Genome::getInnovId(vector<vector<int>>* innovIds, int* lastInnovId, int inNodeId, int outNodeId) {
+int Genome::getInnovId(std::vector<std::vector<int>>* innovIds, int* lastInnovId, int inNodeId, int outNodeId) {
 	/* get the innovation id of the connection inNodeId -> outNodeId. Create one if needed */
 	if ((int) innovIds->size() < inNodeId + 1) {
 		int previousSize = (int) innovIds->size();
@@ -140,7 +140,7 @@ void Genome::getOutputs(float outputs[]) {
 }
 
 
-void Genome::mutate(vector<vector<int>>* innovIds, int* lastInnovId, bool areRecurrentConnectionsAllowed, float mutateWeightThresh, float mutateWeightFullChangeThresh, float mutateWeightFactor, float addConnectionThresh, int maxIterationsFindConnectionThresh, float reactivateConnectionThresh, float addNodeThresh, int maxIterationsFindNodeThresh) {
+void Genome::mutate(std::vector<std::vector<int>>* innovIds, int* lastInnovId, bool areRecurrentConnectionsAllowed, float mutateWeightThresh, float mutateWeightFullChangeThresh, float mutateWeightFactor, float addConnectionThresh, int maxIterationsFindConnectionThresh, float reactivateConnectionThresh, float addNodeThresh, int maxIterationsFindNodeThresh) {
 	// ### WEIGHTS ###
 	float randomNb = (float) rand() / (float) RAND_MAX;
 	while (randomNb < 1.0f + 1e-10 && randomNb > 1.0f - 1e-10) {	// == 1
@@ -188,7 +188,7 @@ void Genome::mutateWeights(float mutateWeightFullChangeThresh, float mutateWeigh
 	}
 }
 
-bool Genome::addConnection(vector<vector<int>>* innovIds, int* lastInnovId, int maxIterationsFindConnectionThresh, bool areRecurrentConnectionsAllowed, float reactivateConnectionThresh) {	// return true if the process ended well, false in the other case
+bool Genome::addConnection(std::vector<std::vector<int>>* innovIds, int* lastInnovId, int maxIterationsFindConnectionThresh, bool areRecurrentConnectionsAllowed, float reactivateConnectionThresh) {	// return true if the process ended well, false in the other case
 	// find valid node pair
 	int iterationNb = 0;
 	int isValid = 0;
@@ -218,7 +218,7 @@ bool Genome::addConnection(vector<vector<int>>* innovIds, int* lastInnovId, int 
 					connections[iConnDisabled].enabled = true;	// former connection is reactivaded
 					return true;
 				} else {
-					cout << "Error : Genome::addConnection" << endl;	// impossible
+					std::cout << "Error : Genome::addConnection" << std::endl;	// impossible
 					return false;
 				}
 			} else {
@@ -261,7 +261,7 @@ int Genome::isValidNewConnection(int inNodeId, int outNodeId, bool areRecurrentC
 	return 1;	// test done : it is a valid connection !
 }
 
-bool Genome::addNode(vector<vector<int>>* innovIds, int* lastInnovId, int maxIterationsFindNodeThresh, bool areRecurrentConnectionsAllowed) {	// return true = node created, false = nothing created
+bool Genome::addNode(std::vector<std::vector<int>>* innovIds, int* lastInnovId, int maxIterationsFindNodeThresh, bool areRecurrentConnectionsAllowed) {	// return true = node created, false = nothing created
 	// choose at random an enabled forward connection
 	if ((int) connections.size() > 0) {
 		int iConn = rand() % (int) connections.size();
@@ -325,7 +325,7 @@ bool Genome::addNode(vector<vector<int>>* innovIds, int* lastInnovId, int maxIte
 			
 			return true;
 		} else {
-			cout << "Error : no active connection found in Genome::addNode" << endl;
+			std::cout << "Error : no active connection found in Genome::addNode" << std::endl;
 			return false;	// no active connection found
 		}
 	} else {
@@ -354,14 +354,14 @@ void Genome::drawNetwork(sf::Vector2u windowSize, float dotsRadius) {
     // ### NODES ###
 	sf::Font font;
 	if (!font.loadFromFile("/usr/share/fonts/cantarell/Cantarell-VF.otf")) {
-		cout << "Error while loading font in 'Genome::drawNetwork'." << endl;
+		std::cout << "Error while loading font in 'Genome::drawNetwork'." << std::endl;
 	}
 
 	for (int i = 0; i < (int) nodes.size(); i++) {
 		dots[i].setRadius(dotsRadius);
 		dots[i].setFillColor(sf::Color::White);
 		
-		dotsText[i].setString(to_string(i));	// need <iostream> for to_string function
+		dotsText[i].setString(std::to_string(i));	// need <iostream> for std::to_string function
 		dotsText[i].setFillColor(sf::Color::White);
 		dotsText[i].setCharacterSize(20);
 		dotsText[i].setFont(font);
@@ -392,7 +392,7 @@ void Genome::drawNetwork(sf::Vector2u windowSize, float dotsRadius) {
 	}
 	// other
 	for (int ilayer = 1; ilayer < (nbLayer - 1); ilayer++) {
-		vector<int> iNodesiLayer;
+		std::vector<int> iNodesiLayer;
 		for (int i = 1 + nbInput + nbOutput; i < (int) nodes.size(); i++) {
 			if (nodes[i].layer == ilayer) {
 				iNodesiLayer.push_back(i);
@@ -459,7 +459,7 @@ void Genome::drawNetwork(sf::Vector2u windowSize, float dotsRadius) {
 
 	sf::String stringMainText = "";
 	for (int i = 0; i < (int) connections.size(); i++) {
-		stringMainText += to_string(connections[i].inNodeId) + "  <->  " + to_string(connections[i].outNodeId) + "   (" +  to_string(connections[i].weight) + ")";	// need <iostream> for to_string function
+		stringMainText += std::to_string(connections[i].inNodeId) + "  <->  " + std::to_string(connections[i].outNodeId) + "   (" +  std::to_string(connections[i].weight) + ")";	// need <iostream> for std::to_string function
 		if (connections[i].enabled && connections[i].isRecurrent) {
 			stringMainText += " R";
 		} else {

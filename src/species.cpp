@@ -1,4 +1,6 @@
-#include "species.hpp"
+#include <NEAT/species.hpp>
+
+using namespace neat;
 
 Species::Species(int id): id(id) {
 	avgFitness = 0;

@@ -1,6 +1,6 @@
-#include <population.hpp>
+#include <NEAT/population.hpp>
 
-using namespace std;
+using namespace neat;
 
 Population::Population(int popSize, int nbInput, int nbOutput, int nbHiddenInit, float probConnInit, bool areRecurrentConnectionsAllowed, float weightExtremumInit, float speciationThreshInit, int threshGensSinceImproved): popSize(popSize), speciationThresh(speciationThreshInit), threshGensSinceImproved(threshGensSinceImproved), nbInput(nbInput), nbOutput(nbOutput), nbHiddenInit(nbHiddenInit), probConnInit(probConnInit), areRecurrentConnectionsAllowed(areRecurrentConnectionsAllowed), weightExtremumInit(weightExtremumInit) {
 	generation = 0;
@@ -35,13 +35,13 @@ void Population::getOutputs(float outputs[], int genomeId) {
 	genomes[genomeId].getOutputs(outputs);
 }
 
-void Population::runNetworkAuto(float processFn(float procInputs[], float procOutputs[], struct args* args), struct args* args, void initArgsInputs(float inputs[], struct args* args), float activationFn(float input), int maxIterationThresh, float fitnessOnMaxIteration) {
+void Population::runNetworkAuto(float processFn(float procInputs[], float procoutputs[], void* args), void* args, void initArgsInputs(float inputs[], void* args), float activationFn(float input), int maxIterationThresh, float fitnessOnMaxIteration) {
 	for (int genomeId = 0; genomeId < popSize; genomeId ++) {
 		runNetworkAuto(processFn, args, initArgsInputs, activationFn, maxIterationThresh, fitnessOnMaxIteration, genomeId);
 	}
 }
 
-void Population::runNetworkAuto(float processFn(float procInputs[], float procOutputs[], struct args* args), struct args* args, void initArgsInputs(float inputs[], struct args* args), float activationFn(float input), int maxIterationThresh, float fitnessOnMaxIteration, int genomeId) {
+void Population::runNetworkAuto(float processFn(float procInputs[], float procOutputs[], void* args), void* args, void initArgsInputs(float inputs[], void* args), float activationFn(float input), int maxIterationThresh, float fitnessOnMaxIteration, int genomeId) {
 	// init args and inputs
 	float procOutputs[nbInput];
     initArgsInputs(procOutputs, args);
@@ -124,7 +124,7 @@ void Population::speciate(int target, int targetThresh, float stepThresh, float 
 
 float Population::compareGenomes(int ig1, int ig2, float a, float b, float c) {
 	int maxInnovId1 = 0;
-	vector<int> connEnabled1;
+	std::vector<int> connEnabled1;
 	for (int i = 0; i < (int) genomes[ig1].connections.size(); i++) {
 		if (genomes[ig1].connections[i].enabled) {
 			connEnabled1.push_back(i);
@@ -135,7 +135,7 @@ float Population::compareGenomes(int ig1, int ig2, float a, float b, float c) {
 	}
 	
 	int maxInnovId2 = 0;
-	vector<int> connEnabled2;
+	std::vector<int> connEnabled2;
 	for (int i = 0; i < (int) genomes[ig2].connections.size(); i++) {
 		if (genomes[ig2].connections[i].enabled) {
 			connEnabled2.push_back(i);
@@ -188,9 +188,9 @@ float Population::compareGenomes(int ig1, int ig2, float a, float b, float c) {
 	}
 	
 	if (nbCommonGenes > 0) {
-		return (a * (float) excessGenes + b * (float) disjointGenes) / (float) max((int) connEnabled1.size(), (int) connEnabled2.size()) + c * sumDiffWeights / (float) nbCommonGenes;
+		return (a * (float) excessGenes + b * (float) disjointGenes) / (float) std::max((int) connEnabled1.size(), (int) connEnabled2.size()) + c * sumDiffWeights / (float) nbCommonGenes;
 	} else {
-		return numeric_limits<float>::max();	// TODO: is there a better way?
+		return std::numeric_limits<float>::max();	// TODO: is there a better way?
 	}
 }
 
@@ -233,7 +233,7 @@ void Population::updateFitnesses() {
 	for (int i = 0; i < (int) species.size(); i++) {
 		if (!species[i].isDead) {
 			if (species[i].gensSinceImproved < threshGensSinceImproved) {
-				species[i].allowedOffspring = (int) ((float) species[i].members.size() * species[i].avgFitnessAdjusted / (avgFitnessAdjusted + numeric_limits<float>::min()));	// note that (int) 0.9f == 0.0f	// numeric_limits<float>::min() = minimum positive value of float
+				species[i].allowedOffspring = (int) ((float) species[i].members.size() * species[i].avgFitnessAdjusted / (avgFitnessAdjusted + std::numeric_limits<float>::min()));	// note that (int) 0.9f == 0.0f	// numeric_limits<float>::min() = minimum positive value of float
 			} else {
 				species[i].allowedOffspring = 0;
 			}
@@ -242,7 +242,7 @@ void Population::updateFitnesses() {
 }
 
 void Population::crossover(bool elitism) {
-	vector<Genome> newGenomes;
+	std::vector<Genome> newGenomes;
 	
 	if (elitism) {	// elitism mode on = we conserve during generations the fitter genome
 		Genome newGenome(nbInput, nbOutput, nbHiddenInit, probConnInit, &innovIds, &lastInnovId, weightExtremumInit);
@@ -336,7 +336,7 @@ int Population::selectParent(int iSpe) {
 			return species[iSpe].members[i];
 		}
 	}
-	cout << "Error : don't find a parent during crossover." << endl;
+	std::cout << "Error : don't find a parent during crossover." << std::endl;
 	return -1;	// impossible
 }
 
@@ -351,64 +351,64 @@ void Population::drawNetwork(int genomeId, sf::Vector2u windowSize, float dotsRa
 }
 
 void Population::printInfo(bool extendedGlobal, bool printSpecies, bool printGenomes, bool extendedGenomes) {
-	cout << "GENERATION " << generation << endl;
+	std::cout << "GENERATION " << generation << std::endl;
 	
-	cout << "	" << "Global" << endl;
-	cout << "	" << "	" << "Average fitness: " << avgFitness << endl;
-	cout << "	" << "	" << "Average fitness (adjusted): " << avgFitnessAdjusted << endl;
-	cout << "	" << "	" << "Best fitness: " << genomes[fitterGenomeId].fitness << endl;
+	std::cout << "	" << "Global" << std::endl;
+	std::cout << "	" << "	" << "Average fitness: " << avgFitness << std::endl;
+	std::cout << "	" << "	" << "Average fitness (adjusted): " << avgFitnessAdjusted << std::endl;
+	std::cout << "	" << "	" << "Best fitness: " << genomes[fitterGenomeId].fitness << std::endl;
 	if (extendedGlobal) {
-		cout << "	" << "	" << "Population size: " << popSize << endl;
-		cout << "	" << "	" << "Number of inputs: " << nbInput << endl;
-		cout << "	" << "	" << "Number of outputs: " << nbOutput << endl;
-		cout << "	" << "	" << "Speciation threshold: " << speciationThresh << endl;
-		cout << "	" << "	" << "Are recurrent connections allowed: ";
+		std::cout << "	" << "	" << "Population size: " << popSize << std::endl;
+		std::cout << "	" << "	" << "Number of inputs: " << nbInput << std::endl;
+		std::cout << "	" << "	" << "Number of outputs: " << nbOutput << std::endl;
+		std::cout << "	" << "	" << "Speciation threshold: " << speciationThresh << std::endl;
+		std::cout << "	" << "	" << "Are recurrent connections allowed: ";
 		if (areRecurrentConnectionsAllowed) {
-			cout << "yes" << endl;
+			std::cout << "yes" << std::endl;
 		} else {
-			cout << "no" << endl;
+			std::cout << "no" << std::endl;
 		}
-		cout << "	" << "	" << "When initializing a new genome" << endl;
-		cout << "	" << "	" << "	" << "Number of hidden nodes: " << nbHiddenInit << endl;
-		cout << "	" << "	" << "	" << "Proability of a connection to be created: " << probConnInit << endl;
-		cout << "	" << "	" << "	" << "Weight bounds: " << weightExtremumInit << endl;
+		std::cout << "	" << "	" << "When initializing a new genome" << std::endl;
+		std::cout << "	" << "	" << "	" << "Number of hidden nodes: " << nbHiddenInit << std::endl;
+		std::cout << "	" << "	" << "	" << "Proability of a connection to be created: " << probConnInit << std::endl;
+		std::cout << "	" << "	" << "	" << "Weight bounds: " << weightExtremumInit << std::endl;
 	
 	}
 	
 	if (printSpecies) {
-		cout << "	" << "Species [id, average fitness, average fitness (adjusted), number of allowed offspring(s), number of generations since improved, number of members, dead]" << endl;
+		std::cout << "	" << "Species [id, average fitness, average fitness (adjusted), number of allowed offspring(s), number of generations since improved, number of members, dead]" << std::endl;
 		for (int i = 0; i < (int) species.size(); i++) {
-			cout << "	" << "	" << species[i].id << "	" << species[i].avgFitness << "	" << species[i].avgFitnessAdjusted << "	" << species[i].allowedOffspring << "	" << species[i].gensSinceImproved << "	" << (int) species[i].members.size() << "	";
+			std::cout << "	" << "	" << species[i].id << "	" << species[i].avgFitness << "	" << species[i].avgFitnessAdjusted << "	" << species[i].allowedOffspring << "	" << species[i].gensSinceImproved << "	" << (int) species[i].members.size() << "	";
 			if (species[i].isDead) {
-				cout << "yes" << endl;
+				std::cout << "yes" << std::endl;
 			} else {
-				cout << "no" << endl;
+				std::cout << "no" << std::endl;
 			}
 		}
 	}
 	
 	if (printGenomes) {
-		cout << "	" << "Genomes [id, fitness, id of the species]" << endl;
+		std::cout << "	" << "Genomes [id, fitness, id of the species]" << std::endl;
 		for (int i = 0; i < popSize; i++) {
-			cout << "	" << "	" << i << "	" << genomes[i].fitness << "	" << genomes[i].speciesId << endl;
+			std::cout << "	" << "	" << i << "	" << genomes[i].fitness << "	" << genomes[i].speciesId << std::endl;
 			if (extendedGenomes) {
 				for (int k = 0; k < (int) genomes[i].connections.size(); k++) {
-					cout << "	" << "	" << "	" << genomes[i].connections[k].inNodeId << " -> " << genomes[i].connections[k].outNodeId << "	(W: " << genomes[i].connections[k].weight << ", Innov: " << genomes[i].connections[k].innovId << ")";
+					std::cout << "	" << "	" << "	" << genomes[i].connections[k].inNodeId << " -> " << genomes[i].connections[k].outNodeId << "	(W: " << genomes[i].connections[k].weight << ", Innov: " << genomes[i].connections[k].innovId << ")";
 					if (genomes[i].connections[k].isRecurrent) {
-						cout << " R ";
+						std::cout << " R ";
 					}
 					if (!genomes[i].connections[k].enabled) {
-						cout << " D ";
+						std::cout << " D ";
 					}
-					cout << endl;
+					std::cout << std::endl;
 				}
 			}
 		}
 	}
 }
 
-void Population::save(const string filepath){
-	ofstream fileobj(filepath);
+void Population::save(const std::string filepath){
+	std::ofstream fileobj(filepath);
 
 	if (fileobj.is_open()){
 		for (int k = 0; k < (int) innovIds.size(); k++){
@@ -462,22 +462,22 @@ void Population::save(const string filepath){
 	}
 }
 
-void Population::load(const string filepath){
-	ifstream fileobj(filepath);
+void Population::load(const std::string filepath){
+	std::ifstream fileobj(filepath);
 
 	if (fileobj.is_open()){
 
-		string line;
+		std::string line;
 		size_t pos = 0;
 
 		if (getline(fileobj, line)){
 			innovIds.clear();
 			size_t pos_sep = line.find(';');
-			while (pos_sep != string::npos) {
+			while (pos_sep != std::string::npos) {
 				innovIds.push_back({});
-				string sub_line = line.substr(0, pos_sep - 1);
+				std::string sub_line = line.substr(0, pos_sep - 1);
 				pos = sub_line.find(',');
-				while (pos != string::npos) {
+				while (pos != std::string::npos) {
 					innovIds.back().push_back(stoi(sub_line.substr(0, pos)));
 					sub_line = sub_line.substr(pos + 1);
 					pos = sub_line.find(',');
@@ -486,92 +486,92 @@ void Population::load(const string filepath){
 				pos_sep = line.find(';');
 			}
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 
 		if (getline(fileobj, line)){
 			lastInnovId = stoi(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			popSize = stoi(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			speciationThresh = stof(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			threshGensSinceImproved = stoi(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			nbInput = stoi(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			nbOutput = stoi(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			nbHiddenInit = stoi(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			probConnInit = stof(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			areRecurrentConnectionsAllowed = (line == "1");
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			weightExtremumInit = stof(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			generation = stoi(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			avgFitness = stof(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			avgFitnessAdjusted = stof(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		if (getline(fileobj, line)){
 			fitterGenomeId = stoi(line);
 		} else {
-			cout << "Error while loading model" << endl;
+			std::cout << "Error while loading model" << std::endl;
 			throw 0;
 		}
 		genomes.clear();
@@ -582,37 +582,37 @@ void Population::load(const string filepath){
 			if (getline(fileobj, line)){
 				genomes.back().speciesId = stoi(line);
 			} else {
-				cout << "Error while loading model" << endl;
+				std::cout << "Error while loading model" << std::endl;
 				throw 0;
 			}
 			if (getline(fileobj, line)){
 				genomes.back().nodes.clear();
 				pos = line.find(',');
-				while (pos != string::npos) {
+				while (pos != std::string::npos) {
 					genomes.back().nodes.push_back(Node());
 
 					genomes.back().nodes.back().id = stoi(line.substr(0, pos));
 
 					line = line.substr(pos + 1);
 					pos = line.find(',');
-					if (pos == string::npos) {
-						cout << "Error while loading model" << endl;
+					if (pos == std::string::npos) {
+						std::cout << "Error while loading model" << std::endl;
 						throw 0;
 					}
 					genomes.back().nodes.back().layer = stoi(line.substr(0, pos));
 
 					line = line.substr(pos + 1);
 					pos = line.find(',');
-					if (pos == string::npos) {
-						cout << "Error while loading model" << endl;
+					if (pos == std::string::npos) {
+						std::cout << "Error while loading model" << std::endl;
 						throw 0;
 					}
 					genomes.back().nodes.back().sumInput = (float) stod(line.substr(0, pos));	// stdof's range is not the float's one... weird, anyway it works with stod of course
 
 					line = line.substr(pos + 1);
 					pos = line.find(',');
-					if (pos == string::npos) {
-						cout << "Error while loading model" << endl;
+					if (pos == std::string::npos) {
+						std::cout << "Error while loading model" << std::endl;
 						throw 0;
 					}
 					genomes.back().nodes.back().sumOutput = (float) stod(line.substr(0, pos));	// stdof's range is not the float's one... weird, anyway it works with stod of course
@@ -621,53 +621,53 @@ void Population::load(const string filepath){
 					pos = line.find(',');
 				}
 			} else {
-				cout << "Error while loading model" << endl;
+				std::cout << "Error while loading model" << std::endl;
 				throw 0;
 			}
 			if (getline(fileobj, line)){
 				genomes.back().connections.clear();
 				pos = line.find(',');
-				while (pos != string::npos) {
+				while (pos != std::string::npos) {
 					genomes.back().connections.push_back(Connection());
 
 					genomes.back().connections.back().innovId = stoi(line.substr(0, pos));
 
 					line = line.substr(pos + 1);
 					pos = line.find(',');
-					if (pos == string::npos) {
-						cout << "Error while loading model" << endl;
+					if (pos == std::string::npos) {
+						std::cout << "Error while loading model" << std::endl;
 						throw 0;
 					}
 					genomes.back().connections.back().inNodeId = stoi(line.substr(0, pos));
 
 					line = line.substr(pos + 1);
 					pos = line.find(',');
-					if (pos == string::npos) {
-						cout << "Error while loading model" << endl;
+					if (pos == std::string::npos) {
+						std::cout << "Error while loading model" << std::endl;
 						throw 0;
 					}
 					genomes.back().connections.back().outNodeId = stoi(line.substr(0, pos));
 
 					line = line.substr(pos + 1);
 					pos = line.find(',');
-					if (pos == string::npos) {
-						cout << "Error while loading model" << endl;
+					if (pos == std::string::npos) {
+						std::cout << "Error while loading model" << std::endl;
 						throw 0;
 					}
 					genomes.back().connections.back().weight = stof(line.substr(0, pos));
 
 					line = line.substr(pos + 1);
 					pos = line.find(',');
-					if (pos == string::npos) {
-						cout << "Error while loading model" << endl;
+					if (pos == std::string::npos) {
+						std::cout << "Error while loading model" << std::endl;
 						throw 0;
 					}
 					genomes.back().connections.back().enabled = (line.substr(0, pos) == "1");
 
 					line = line.substr(pos + 1);
 					pos = line.find(',');
-					if (pos == string::npos) {
-						cout << "Error while loading model" << endl;
+					if (pos == std::string::npos) {
+						std::cout << "Error while loading model" << std::endl;
 						throw 0;
 					}
 					genomes.back().connections.back().isRecurrent = (line.substr(0, pos) == "1");
@@ -676,14 +676,14 @@ void Population::load(const string filepath){
 					pos = line.find(',');
 				}
 			} else {
-				cout << "Error while loading model" << endl;
+				std::cout << "Error while loading model" << std::endl;
 				throw 0;
 			}
 		}
 
 		fileobj.close();
 	} else {
-		cout << "Error while loading model" << endl;
+		std::cout << "Error while loading model" << std::endl;
 		throw 0;
 	}
 }

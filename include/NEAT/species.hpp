@@ -3,7 +3,7 @@
 
 #include <vector>
 
-using namespace std;
+namespace neat {
 
 class Species{
 	public:
@@ -14,9 +14,11 @@ class Species{
 		float sumFitness;
 		int gensSinceImproved;
 		bool isDead;
-		vector<int> members;
+		std::vector<int> members;
 
 		Species(int id);
 };
+
+}
 
 #endif	// SPECIES_HPP

@@ -1,4 +1,6 @@
-#include "node.hpp"
+#include <NEAT/node.hpp>
+
+using namespace neat;
 
 Node::Node(int id, int layer): id(id), layer(layer) {
 	sumInput = 0;

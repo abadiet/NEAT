@@ -1,6 +1,8 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
+namespace neat {
+
 class Node{
 	public:
 		int id;
@@ -12,5 +14,7 @@ class Node{
 		Node() {};
 
 };
+
+}
 
 #endif	// NODE_HPP
