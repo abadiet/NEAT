@@ -1,6 +1,6 @@
 #include <iostream>
 #include <cmath>
-#include <population.hpp>
+#include <NEAT/population.hpp>
 
 using namespace std;
 
@@ -19,7 +19,8 @@ struct args {
     
 } myArgs;
 
-void setupFn(float inputsInit[], struct args* myArgs) {
+void setupFn(float inputsInit[], void* myArgs_void) {
+    struct args* myArgs = (struct args*) myArgs_void;
     /* Setup the arguments and the first inputs given to the network */
     
     // setup myArgs ...
@@ -27,7 +28,8 @@ void setupFn(float inputsInit[], struct args* myArgs) {
     // setup inputsInit ...
 }
 
-float processFn(float inputs[], float outputs[], struct args* myArgs) {
+float processFn(float inputs[], float outputs[], void* myArgs_void) {
+    struct args* myArgs = (struct args*) myArgs_void;
     /* Relatively to myArgs, process the given inputs to get the outputs which will be given to the Network next iteration. Return negative float if process not done (e.g. game not finished), else return the fitness */
     
     // load inputs ...
