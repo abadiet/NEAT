@@ -1,6 +1,6 @@
 # NEAT
 
-This repo is a library for evolving neural networks with NEAT written C++.
+This repo is a library for evolving neural networks with NEAT written in C++.
 
 <p align="center">
 	<img src="https://github.com/titofra/NEAT/raw/main/resources/network.png" width="700">
