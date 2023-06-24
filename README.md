@@ -2,6 +2,8 @@
 
 This repo is a library for evolving neural networks with NEAT written in C++.
 
+⚠️ WARNING: This project contains several issues and will not be updated. Check [PNEATM](https://github.com/titofra/PNEATM) for my own neural networks which is based on this repo for more.
+
 <p align="center">
 	<img src="https://github.com/titofra/NEAT/raw/main/resources/network.png" width="700">
 </p>
