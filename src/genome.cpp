@@ -471,13 +471,12 @@ void Genome::drawNetwork(sf::Vector2u windowSize, float dotsRadius) {
 	}
 	mainText.setString(stringMainText);
     
-    while (window.isOpen())
-    {
+    while (window.isOpen ()) {
         sf::Event event;
-        while (window.pollEvent(event))
+        while (window.pollEvent (event))
         {
             if (event.type == sf::Event::Closed) {
-                window.close();
+                window.close ();
             }
         }
 
